@@ -1,4 +1,4 @@
-update=Sun 29 Jul 2018 01:17:47 AM CEST
+update=Thu 16 Aug 2018 12:40:03 AM CEST
 version=1
 last_client=kicad
 [pcbnew]
@@ -62,3 +62,4 @@ LibName30=atmel
 LibName31=contrib
 LibName32=valves
 LibName33=/home/paul/df/hw-kicad/device.farm
+LibName34=MCU_ST_STM32F0
