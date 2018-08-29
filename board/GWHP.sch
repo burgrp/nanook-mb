@@ -1381,10 +1381,6 @@ NoConn ~ 5200 1800
 NoConn ~ 5200 1700
 NoConn ~ 5200 1600
 NoConn ~ 5200 1500
-NoConn ~ 5200 1400
-NoConn ~ 5200 1300
-NoConn ~ 5200 1200
-NoConn ~ 5200 1100
 $Comp
 L R R3
 U 1 1 5B81D7C5
@@ -1837,4 +1833,53 @@ Text Label 1850 1000 0    60   ~ 0
 SWITCHED_L
 Text Label 1400 2400 2    60   ~ 0
 SWITCHED_L
+Text Label 5200 1100 0    60   ~ 0
+USB-DP
+Text Label 5200 1200 0    60   ~ 0
+USB-DM
+Text Label 5200 1300 0    60   ~ 0
+RX0
+Text Label 5200 1400 0    60   ~ 0
+TX0
+$Comp
+L Conn_01x06 J10
+U 1 1 5B868756
+P 6900 1150
+F 0 "J10" H 6900 1450 50  0000 C CNN
+F 1 "Service" H 6900 750 50  0000 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x06_Pitch2.54mm" H 6900 1150 50  0001 C CNN
+F 3 "" H 6900 1150 50  0001 C CNN
+	1    6900 1150
+	1    0    0    1   
+$EndComp
+$Comp
+L GND #PWR060
+U 1 1 5B868D57
+P 6700 1350
+F 0 "#PWR060" H 6700 1100 50  0001 C CNN
+F 1 "GND" H 6700 1200 50  0000 C CNN
+F 2 "" H 6700 1350 50  0001 C CNN
+F 3 "" H 6700 1350 50  0001 C CNN
+	1    6700 1350
+	1    0    0    -1  
+$EndComp
+Text Label 6700 1250 2    60   ~ 0
+TX0
+Text Label 6700 1150 2    60   ~ 0
+RX0
+Text Label 6700 1050 2    60   ~ 0
+USB-DM
+Text Label 6700 950  2    60   ~ 0
+USB-DP
+$Comp
+L +5V #PWR061
+U 1 1 5B8691C9
+P 6700 850
+F 0 "#PWR061" H 6700 700 50  0001 C CNN
+F 1 "+5V" V 6700 1100 50  0000 C CNN
+F 2 "" H 6700 850 50  0001 C CNN
+F 3 "" H 6700 850 50  0001 C CNN
+	1    6700 850 
+	0    -1   -1   0   
+$EndComp
 $EndSCHEMATC
