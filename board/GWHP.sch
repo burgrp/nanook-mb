@@ -569,28 +569,28 @@ Text Label 5400 5200 0    60   ~ 0
 SWDIO
 Text Label 5400 5300 0    60   ~ 0
 SWCLK
-Text Label 1200 2700 2    60   ~ 0
+Text Label 1400 2700 2    60   ~ 0
 MAINS_N
-Text Label 1200 2400 2    60   ~ 0
+Text Label 1550 1000 2    60   ~ 0
 MAINS_L1
 $Comp
 L Conn_01x04 J2
 U 1 1 5B7C42BE
-P 1400 1350
-F 0 "J2" H 1400 1550 50  0000 C CNN
-F 1 "Mains" H 1400 1050 50  0000 C CNN
-F 2 "device.farm:HB-9500-4P" H 1400 1350 50  0001 C CNN
-F 3 "" H 1400 1350 50  0001 C CNN
-	1    1400 1350
+P 1400 1550
+F 0 "J2" H 1400 1750 50  0000 C CNN
+F 1 "Mains" H 1400 1250 50  0000 C CNN
+F 2 "device.farm:HB-9500-4P" H 1400 1550 50  0001 C CNN
+F 3 "" H 1400 1550 50  0001 C CNN
+	1    1400 1550
 	-1   0    0    -1  
 $EndComp
-Text Label 1600 1550 0    60   ~ 0
+Text Label 1600 1750 0    60   ~ 0
 MAINS_N
-Text Label 1600 1450 0    60   ~ 0
+Text Label 1600 1650 0    60   ~ 0
 MAINS_L1
-Text Label 1600 1350 0    60   ~ 0
+Text Label 1600 1550 0    60   ~ 0
 MAINS_L2
-Text Label 1600 1250 0    60   ~ 0
+Text Label 1600 1450 0    60   ~ 0
 MAINS_L3
 $Comp
 L Conn_01x03 J9
@@ -685,18 +685,18 @@ MAINS_N
 Text Label 10050 8250 2    60   ~ 0
 MAINS_N
 Text Label 8400 7400 2    60   ~ 0
-MAINS_L1
+SWITCHED_L
 Text Label 8400 8150 2    60   ~ 0
-MAINS_L1
+SWITCHED_L
 Text Label 8400 7600 2    60   ~ 0
 PUMP_COLD_SIDE
 Text Label 8400 8350 2    60   ~ 0
 PUMP_HOT_SIDE
-Text Label 10400 2600 2    60   ~ 0
+Text Label 10400 2400 2    60   ~ 0
 COMP_L1
 Text Label 10400 2500 2    60   ~ 0
 COMP_L2
-Text Label 10400 2400 2    60   ~ 0
+Text Label 10400 2600 2    60   ~ 0
 COMP_L3
 $Comp
 L RELAY_2 K1
@@ -843,7 +843,7 @@ MAINS_L3
 NoConn ~ 8700 5600
 NoConn ~ 8700 5300
 Text Label 8700 5000 2    60   ~ 0
-MAINS_L1
+SWITCHED_L
 Text Label 8700 5100 2    60   ~ 0
 MAINS_N
 $Comp
@@ -1098,12 +1098,12 @@ CPU/MCU
 $Comp
 L Conn_01x02 J1
 U 1 1 5B7E3B33
-P 1300 2200
-F 0 "J1" V 1300 2300 50  0000 C CNN
-F 1 "Power Switch" V 1400 2150 50  0000 C CNN
-F 2 "device.farm:DG142R-2-5.08" H 1300 2200 50  0001 C CNN
-F 3 "" H 1300 2200 50  0001 C CNN
-	1    1300 2200
+P 1650 800
+F 0 "J1" V 1650 900 50  0000 C CNN
+F 1 "Power Switch" V 1750 750 50  0000 C CNN
+F 2 "device.farm:DG142R-2-5.08" H 1650 800 50  0001 C CNN
+F 3 "" H 1650 800 50  0001 C CNN
+	1    1650 800 
 	0    -1   -1   0   
 $EndComp
 Text Notes 650  700  0    60   ~ 0
@@ -1638,9 +1638,7 @@ Wire Notes Line
 Wire Notes Line
 	3000 500  3000 9350
 Wire Wire Line
-	1200 2400 1300 2400
-Wire Wire Line
-	1200 2700 1400 2700
+	1550 1000 1650 1000
 Wire Notes Line
 	500  9300 11200 9300
 Wire Wire Line
@@ -1833,4 +1831,10 @@ Wire Wire Line
 	4200 5300 4200 5650
 Wire Wire Line
 	4300 5400 4300 5650
+Wire Wire Line
+	1750 1000 1850 1000
+Text Label 1850 1000 0    60   ~ 0
+SWITCHED_L
+Text Label 1400 2400 2    60   ~ 0
+SWITCHED_L
 $EndSCHEMATC
