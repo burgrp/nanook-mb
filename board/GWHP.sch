@@ -1884,4 +1884,6 @@ F 3 "" H 6700 850 50  0001 C CNN
 $EndComp
 Text Label 1800 5450 0    60   ~ 0
 BACKUP_C
+Text Label 8150 2700 1    60   ~ 0
+COMP_RELAY_PWR
 $EndSCHEMATC
