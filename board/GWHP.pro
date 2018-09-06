@@ -1,4 +1,4 @@
-update=Thu 16 Aug 2018 12:40:03 AM CEST
+update=Thu 06 Sep 2018 04:17:50 PM CEST
 version=1
 last_client=kicad
 [pcbnew]
@@ -63,3 +63,13 @@ LibName31=contrib
 LibName32=valves
 LibName33=/home/paul/df/hw-kicad/device.farm
 LibName34=MCU_ST_STM32F0
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60

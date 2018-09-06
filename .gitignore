@@ -3,3 +3,4 @@
 *.kicad_pcb-bak
 *-cache.lib
 gerber.zip
+node_modules
