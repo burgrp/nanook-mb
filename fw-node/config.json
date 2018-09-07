@@ -1,15 +1,71 @@
 {
-    "i2c": {
-        "module": "./i2c.js"
-    },
-
-    "peripherals": {
-        "module": "./peripherals.js",
-        "i2c": "-> i2c"
-    },
-
     "controller": {
         "module": "./controller.js",
-        "rgbLed": "-> peripherals.rgbLed"
+        "peripherals": {
+            "module": "./peripherals.js",
+            "i2c": {
+                "module": "./i2c.js"
+            },
+            "lm75a": {
+                "coldWaterIn": {
+                    "name": "Cold Side Water Inlet",
+                    "address": "0x48"
+                },
+                "coldWaterOut": {
+                    "name": "Cold Side Water Outlet",
+                    "address": "0x49"
+                },
+                "coldRefrigerantIn": {
+                    "name": "Cold Side Refrigerant Inlet",
+                    "address": "0x4A"
+                },
+                "coldRefrigerantOut": {
+                    "name": "Cold Side Refrigerant Outlet",
+                    "address": "0x4B"
+                },
+                "hotRefrigerantIn": {
+                    "name": "Hot Side Refrigerant Inlet",
+                    "address": "0x4C"
+                },
+                "hotRefrigerantOut": {
+                    "name": "Hot Side Refrigerant Outlet",
+                    "address": "0x4D"
+                },
+                "hotWaterIn": {
+                    "name": "Hot Side Water Inlet",
+                    "address": "0x4E"
+                },
+                "hotWaterOut": {
+                    "name": "Hot Side Water Outlet",
+                    "address": "0x4F"
+                }
+            },
+            "ias3a": {
+                "coldSide": {
+                    "name": "Cold Side",
+                    "address": "0x70",
+                    "transducerWaterPressure": {
+                        "min": 0,
+                        "max": 12
+                    },
+                    "transducerRefrigerantPressure": {
+                        "min": -1,
+                        "max": 9.3
+                    }
+                },
+                "hotSide": {
+                    "name": "Hot Side",
+                    "address": "0x72",
+                    "transducerWaterPressure": {
+                        "min": 0,
+                        "max": 12
+                    },
+                    "transducerRefrigerantPressure": {
+                        "min": 0,
+                        "max": 34.5
+                    }
+                }
+            }
+        }
     }
 }
