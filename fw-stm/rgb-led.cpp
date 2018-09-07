@@ -112,6 +112,11 @@ public:
             update();
         }
     }
+
+    void set(Setting* setting) {
+        this->setting = *setting;
+        update();
+    }
 };
 
 }

@@ -1,0 +1,10 @@
+{
+  "name": "ias3a-test",
+  "version": "1.0.0",
+  "main": "test.js",
+  "license": "ISC",
+  "dependencies": {
+    "@device.farm/appglue": "1.0.10",
+    "@device.farm/usb-i2c-driver": "1.0.0"
+  }
+}

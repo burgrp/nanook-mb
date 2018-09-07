@@ -1,0 +1,15 @@
+{
+    "i2c": {
+        "module": "./i2c.js"
+    },
+
+    "peripherals": {
+        "module": "./peripherals.js",
+        "i2c": "-> i2c"
+    },
+
+    "controller": {
+        "module": "./controller.js",
+        "rgbLed": "-> peripherals.rgbLed"
+    }
+}
