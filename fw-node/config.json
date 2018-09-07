@@ -15,19 +15,19 @@
                     "name": "Cold Side Water Outlet",
                     "address": "0x49"
                 },
-                "coldRefrigerantIn": {
+                "coldFrigoIn": {
                     "name": "Cold Side Refrigerant Inlet",
                     "address": "0x4A"
                 },
-                "coldRefrigerantOut": {
+                "coldFrigoOut": {
                     "name": "Cold Side Refrigerant Outlet",
                     "address": "0x4B"
                 },
-                "hotRefrigerantIn": {
+                "hotFrigoIn": {
                     "name": "Hot Side Refrigerant Inlet",
                     "address": "0x4C"
                 },
-                "hotRefrigerantOut": {
+                "hotFrigoOut": {
                     "name": "Hot Side Refrigerant Outlet",
                     "address": "0x4D"
                 },
@@ -44,11 +44,14 @@
                 "coldSide": {
                     "name": "Cold Side",
                     "address": "0x70",
+                    "transducerWaterFlow": {
+                        "mlPerRev": 1
+                    },
                     "transducerWaterPressure": {
                         "min": 0,
                         "max": 12
                     },
-                    "transducerRefrigerantPressure": {
+                    "transducerFrigoPressure": {
                         "min": -1,
                         "max": 9.3
                     }
@@ -56,11 +59,14 @@
                 "hotSide": {
                     "name": "Hot Side",
                     "address": "0x72",
+                    "transducerWaterFlow": {
+                        "mlPerRev": 1
+                    },
                     "transducerWaterPressure": {
                         "min": 0,
                         "max": 12
                     },
-                    "transducerRefrigerantPressure": {
+                    "transducerFrigoPressure": {
                         "min": 0,
                         "max": 34.5
                     }
