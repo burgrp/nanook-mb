@@ -23,37 +23,33 @@ module.exports = async config => {
         SHUT_DOWN: {
             name: "Shut down",
             led: [10, 0, 10, 0, 255, 0, 0]
-        },
-        OFF: {
-            name: "Off",            
-            led: [0, 0, 0, 0, 255, 0, 0]
         }
     }
 
     let model = {
         systemMode: SystemMode.OS_BOOTED,
-        sensors: {}
+        sensors: {},
+        shouldWork: true,
+        ramp: 0,
+        relay: false
     };
-
-    let ledMode;
 
     async function asyncWait(ms) {
         return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-
-    async function closeE2V() {
-        console.info("Closing E2V...")
-        await asyncWait(10000);
-        console.info("E2V closed");
     }
 
     function modeIs(mode) {
         return model.systemMode === mode;
     }
 
-    function switchTo(mode) {
+    async function switchTo(mode) {
         console.info("Switching to " + mode.name);
         model.systemMode = mode;
+        try {
+            await config.peripherals.setLed(...(model.systemMode.led || [1, 1, 1, 1, 255, 255, 255]));
+        } catch(e) {
+            console.error("Error setting led", e);
+        }
     }
 
     return {
@@ -63,39 +59,75 @@ module.exports = async config => {
         async start() {
             console.info("Starting controller...");
 
-            setInterval(async () => {
-                try {
+            async function tick() {
+                try {                    
 
                     console.info("--------------------------------------------------");
                     console.info("SYSTEM MODE: " + model.systemMode.name);
 
-                    if (ledMode != model.systemMode) {
-                        try {
-                            await config.peripherals.setLed(...(model.systemMode.led || [0, 0, 0, 0, 0, 0, 255]));
-                        } catch(e) {
-                            console.error(e);
-                        }
-                    }
+                    await config.peripherals.getSensors(model.sensors);
 
-                    if (modeIs(SystemMode.OFF)) {
-                        process.exit(1);
+                    function printValue(k, v) {
+                        console.info(k + ":", " ".repeat(Math.max(22 - k.length, 0)), v);
                     }
-
-                    await config.peripherals.readSensors(model.sensors);
 
                     Object.values(model.sensors).forEach(sensor => {
-                        console.info(sensor.key + ":", " ".repeat(Math.max(22 - sensor.key.length, 0)), sensor.error || (sensor.value + sensor.unit));
+                        printValue(sensor.key, sensor.error || (sensor.value + sensor.unit));
+                    });
+                    Object.entries(model).filter(([k, v]) => !(v instanceof Object)).forEach(([k, v]) => {
+                        printValue(k, v);
                     });
 
                     let sensorErrors = Object.values(model.sensors).filter(s => s.error).map(s => s.name + " error: " + s.error);
                     if (sensorErrors.length) {
-                        //throw sensorErrors;
+                        throw sensorErrors;
                     }
 
                     if (modeIs(SystemMode.OS_BOOTED)) {
-                        switchTo(SystemMode.STAND_BY);
+                        await switchTo(SystemMode.STAND_BY);
                     }
 
+                    if (modeIs(SystemMode.STAND_BY) && model.shouldWork) {
+                        await switchTo(SystemMode.RAMP_UP);
+                    }
+
+                    if (modeIs(SystemMode.RAMP_UP)) {
+                        if (model.ramp === 100) {
+                            model.ramp = 0;
+                            switchTo(SystemMode.WORKING);
+                            model.shouldWork = false;
+                        } else {
+                            model.ramp += config.tickMs / config.rampSec / 10;
+                            if (model.ramp >= 100) {
+                                model.ramp = 100;
+                                model.relay = true;
+                            }
+                        }
+                    }
+
+                    if (modeIs(SystemMode.RAMP_DOWN)) {
+                        if (model.ramp === 0) {                           
+                            switchTo(SystemMode.STAND_BY);
+                        } else {
+                            model.relay = false;
+                            model.ramp -= config.tickMs / config.rampSec / 10;
+                            if (model.ramp <= 0) {
+                                model.ramp = 0;
+                            }
+                        }
+                    }
+
+                    if (modeIs(SystemMode.WORKING) && !model.shouldWork) {
+                        await switchTo(SystemMode.RAMP_DOWN);
+                        model.ramp = 100;
+                    }
+
+                    await config.peripherals.setActors({
+                        relay: model.relay,
+                        ramp: model.ramp,
+                        coldPump: model.relay || model.ramp > 0,
+                        hotPump: model.relay || model.ramp > 0
+                    });
 
                 } catch (errors) {
 
@@ -107,20 +139,32 @@ module.exports = async config => {
                         console.error(error);
                     });
 
-                    if (!modeIs(SystemMode.SHUT_DOWN) && !modeIs(SystemMode.OFF)) {
-                        switchTo(SystemMode.SHUT_DOWN);
+                    if (!modeIs(SystemMode.SHUT_DOWN)) {
                         try {
-                            await closeE2V();
-                        } catch (e2) {
-                            console.error("Error when closing E2V", e2);
+                            await switchTo(SystemMode.SHUT_DOWN);    
+                            await config.peripherals.e2vFastClose();
+                        } catch(e) {
+                            console.error(e);
                         }
-                        switchTo(SystemMode.OFF);
-
+                        process.exit(1);
                     }
 
                 }
 
-            }, config.tickMs || 1000);
+            };
+
+            function scheduleNextTick() {
+                setTimeout(() => {
+                    tick().then(() => {
+                        scheduleNextTick();
+                    }).catch(e => {
+                        console.error(e);
+                        scheduleNextTick();
+                    });
+                }, config.tickMs);
+            }
+
+            scheduleNextTick();
 
         }
     }

@@ -9,7 +9,15 @@ module.exports = async config => {
             await i2c.write(address, [1, rampUpTime, onTime, rampDownTime, offTime, r, g, b]);
         },
 
-        async readSensors(sensorMap) {
+        async e2vFastClose() {
+            console.info(">>> e2vFastClose");
+        },
+
+        async setActors(actors) {
+            console.info(">>> setActors", JSON.stringify(actors));
+        },
+
+        async getSensors(sensorMap) {
 
             async function read(sensorsConfig, sensorsProvider) {
                 for (let key in sensorsConfig || {}) {
