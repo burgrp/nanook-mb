@@ -6,7 +6,7 @@ module.exports = async config => {
 
     let obpAddress = config.obpAddress || 0x73;
 
-    let registers = {};
+    let registers = [];
     let tickers = [];
 
     Object.entries(config.lm75a).forEach(([key, registerConfig]) => {
@@ -19,7 +19,7 @@ module.exports = async config => {
                 await register.failed(e.message || e);
             }
         });
-        registers[register.key] = register;
+        registers.push(register);
     });
 
     Object.entries(config.ias3a).forEach(([key, registerConfig]) => {
@@ -71,7 +71,7 @@ module.exports = async config => {
             iasSensor("FrigoPressure", "Refrigerant Pressure", convertPressure, "bar")
         ];
 
-        iasSensors.forEach(s => registers[s.key] = s);
+        registers.push(...iasSensors);
 
         tickers.push(async () => {
             try {
@@ -92,25 +92,23 @@ module.exports = async config => {
 
     });
 
-    function createActorRegister(key, name, value, setHandler) {
+    function createActorRegister(key, name, value, writeHandler) {
         let register = createRegister(key, name, value);
-        register.watch(async () => {
+        register.write = async (value) => {
             console.info("->", key, value);
-            await setHandler(register.value);
-        });
-        registers[key] = register;
+            try {
+                await writeHandler(value);
+                register.set(value);
+            } catch (e) {
+                register.failed(e.message || e);
+            }
+            
+        };
+        registers.push(register);
     }
 
-    createActorRegister("rgbLed", "RGB LED", {
-        rampUpTime: 0,
-        onTime: 0,
-        rampDownTime: 0,
-        offTime: 0,
-        r: 0,
-        g: 0,
-        b: 255
-    }, async value => {
-        await i2c.write(obpAddress, [1, value.rampUpTime, value.onTime, value.rampDownTime, value.offTime, value.r, value.g, value.b]);
+    createActorRegister("rgbLed", "RGB LED", undefined, async value => {
+        await i2c.write(obpAddress, [1, ...value]);
     });
 
     async function tick() {

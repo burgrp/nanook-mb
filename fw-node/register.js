@@ -26,10 +26,6 @@ module.exports = (key, name, value, unit) => {
             }
         },
 
-        async assign(...objects) {
-            await this.set(Object.assign({}, this.value, ...objects));
-        },
-
         async failed(error) {
             this.set(undefined, error);
         }
