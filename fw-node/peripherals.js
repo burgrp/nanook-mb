@@ -45,16 +45,16 @@ module.exports = async config => {
             let voltage = 5 * raw / 4096;
             if (voltage < 0.4) {
                 throw `Pressure transducer voltage ${voltage} too low`;
-            }            
+            }
             voltage = Math.round(voltage * 20) / 20;
-            
+
             let value = (voltage - 0.5) / 4 * (transducerParams.max - transducerParams.min) + transducerParams.min;
             noiseBuffer.push(value);
 
             while (noiseBuffer.length > 5) {
                 noiseBuffer.shift();
             }
-            
+
             let max;
             for (let v of noiseBuffer) {
                 if (max === undefined || max < v) {
@@ -92,6 +92,26 @@ module.exports = async config => {
 
     });
 
+    function createActorRegister(key, name, value, setHandler) {
+        let register = createRegister(key, name, value);
+        register.watch(async () => {
+            console.info("->", key, value);
+            await setHandler(register.value);
+        });
+        registers[key] = register;
+    }
+
+    createActorRegister("rgbLed", "RGB LED", {
+        rampUpTime: 0,
+        onTime: 0,
+        rampDownTime: 0,
+        offTime: 0,
+        r: 0,
+        g: 0,
+        b: 255
+    }, async value => {
+        await i2c.write(obpAddress, [1, value.rampUpTime, value.onTime, value.rampDownTime, value.offTime, value.r, value.g, value.b]);
+    });
 
     async function tick() {
         for (let ticker of tickers) {
@@ -117,83 +137,6 @@ module.exports = async config => {
             await i2c.write(obpAddress, [1, rampUpTime, onTime, rampDownTime, offTime, r, g, b]);
         },
 
-        registers,
-
-        // async getRegisters(registers) {
-
-
-
-
-        // await sensorRegisters(config.lm75a, async (key, config) => {
-        //     let sensor = {
-        //         key: key + "Temp",
-        //         name: config.name + " Temperature"
-        //     };
-        //     try {
-        //         let data = Buffer.from(await i2c.read(config.address, 2));
-        //         sensor.value = (0.125 * data.readUInt16BE()) / 32;
-        //         sensor.unit = "°C";
-        //     } catch (e) {
-        //         sensor.error = e.message || e;
-        //     }
-        //     return [sensor];
-        // });
-
-        // await sensorRegisters(config.ias3a, async (key, config) => {
-
-        //     function iasSensors(rawWaterFlow, rawWaterPressure, rawFrigoPressure, error) {
-
-        //         function iasSensor(keySuffix, name, value, converter, unit, error) {
-
-        //             if (!error) {
-        //                 try {
-        //                     if (value == 0xFFFF) {
-        //                         throw "Transducer not read yet";
-        //                     }
-        //                     value = converter(value, config["transducer" + keySuffix]);
-        //                 } catch (e) {
-        //                     value = undefined;
-        //                     error = e.message || e;
-        //                 }
-        //             }
-
-        //             return {
-        //                 key: key + keySuffix,
-        //                 name: config.name + " " + name,
-        //                 value,
-        //                 unit,
-        //                 error
-        //             };
-        //         }
-
-        //         function convertFlow(raw, transducerParams) {
-        //             return transducerParams.mlPerRev * raw * 60 * 60 / 1000;
-        //         }
-
-        //         function convertPressure(raw, transducerParams) {
-        //             let voltage = 5 * raw / 4096;
-        //             if (voltage < 0.4) {
-        //                 throw `Pressure transducer voltage ${voltage} too low`;
-        //             }
-        //             return (voltage - 0.5) / 4 * (transducerParams.max - transducerParams.min) + transducerParams.min;
-        //         }
-
-        //         return [
-        //             iasSensor("WaterFlow", "Water Flow", rawWaterFlow, convertFlow, "l/h", error),
-        //             iasSensor("WaterPressure", "Water Pressure", rawWaterPressure, convertPressure, "bar", error),
-        //             iasSensor("FrigoPressure", "Refrigerant Pressure", rawFrigoPressure, convertPressure, "bar", error),
-        //         ];
-        //     };
-
-        //     try {
-        //         let data = Buffer.from(await i2c.read(config.address, 6));
-        //         return iasSensors(data.readUInt16LE(0), data.readUInt16LE(2), data.readUInt16LE(4));
-        //     } catch (e) {
-        //         return iasSensors(undefined, undefined, undefined, e.message || e);
-        //     }
-
-        // });
-
-        // }
+        registers
     }
 }

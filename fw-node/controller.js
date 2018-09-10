@@ -41,27 +41,16 @@ module.exports = async config => {
 
             Object.values(registers).forEach(register => {
                 register.watch(() => {
-                    console.info(register.key, register.error || register.value);
+                    console.info(register.key, register.error || register.value, register.unit? register.unit: "");
                 });
             });
 
-            // async function tick() {
-
-
-            // };
-
-            // function scheduleNextTick() {
-            //     setTimeout(() => {
-            //         tick().then(() => {
-            //             scheduleNextTick();
-            //         }).catch(e => {
-            //             console.error(e);
-            //             scheduleNextTick();
-            //         });
-            //     }, config.tickMs);
-            // }
-
-            // //scheduleNextTick();
+            
+            await registers.rgbLed.assign({
+                rampUpTime: 100
+            }, {
+                r: 255
+            });
 
             console.info(JSON.stringify(registers, null, 2));
 

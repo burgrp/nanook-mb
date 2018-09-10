@@ -1,3 +1,5 @@
+const deepEqual = require("fast-deep-equal");
+
 module.exports = (key, name, value, unit) => {
 
     let listeners = [];
@@ -15,13 +17,17 @@ module.exports = (key, name, value, unit) => {
         },
 
         async set(value, error) {
-            if (this.value !== value || this.error !== error) {
+            if (!deepEqual(this.value, value) || !deepEqual(this.error, error)) {
                 this.value = value;
                 this.error = error;
                 for (let listener of listeners) {
                     await listener(this);
                 }
             }
+        },
+
+        async assign(...objects) {
+            await this.set(Object.assign({}, this.value, ...objects));
         },
 
         async failed(error) {
