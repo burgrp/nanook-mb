@@ -131,10 +131,6 @@ module.exports = async config => {
     scheduleNextTick();
 
     return {
-        async setLed(rampUpTime, onTime, rampDownTime, offTime, r, g, b) {
-            await i2c.write(obpAddress, [1, rampUpTime, onTime, rampDownTime, offTime, r, g, b]);
-        },
-
         registers
     }
 }
