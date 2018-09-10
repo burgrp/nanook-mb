@@ -1,10 +1,10 @@
 {
     "controller": {
         "module": "./controller.js",
-        "tickMs": 500,
         "rampSec": 20,
         "peripherals": {
             "module": "./peripherals.js",
+            "tickMs": 500,
             "i2c": {
                 "module": "./i2c.js"
             },
