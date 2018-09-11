@@ -4,9 +4,19 @@ wg.pages.home = {
 
         let registers = await wg.dashboard.getRegisters();
 
-        function updateRegister(register) {            
-            registers[register.key]
-            .el
+        function updateRegister(register) {
+            let el = registers[register.key].el;
+            
+            if (typeof register.value === "number") {
+                register.value = Math.round(register.value * 10) / 10;
+                let diff = register.value - registers[register.key].value;
+                el.toggleClass("goesDown", diff < 0);
+                el.toggleClass("goesUp", diff > 0);
+            }
+
+            registers[register.key].value = register.value;            
+
+            el
             .find(".number")
             .text(
                 register.value instanceof Object? 

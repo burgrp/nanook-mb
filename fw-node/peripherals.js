@@ -111,6 +111,13 @@ module.exports = async config => {
         await i2c.write(obpAddress, [1, ...value]);
     });
 
+    createActorRegister("compressorRamp", "Compressor Ramp", 0, async value => {
+        //await i2c.write(obpAddress, [1, ...value]);
+    });
+    createActorRegister("compressorRelay", "Compressor Relay", false, async value => {
+        //await i2c.write(obpAddress, [1, ...value]);
+    });
+
     async function tick() {
         for (let ticker of tickers) {
             await ticker();

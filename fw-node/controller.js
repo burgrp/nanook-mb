@@ -17,12 +17,12 @@ module.exports = async config => {
 
     async function setRelay(state) {
         checkSystemError();
-        console.info("Switching relay", state ? "ON" : "OFF");
+        await registers.compressorRelay.set(state);
     }
 
     async function setRamp(ramp) {
         checkSystemError();
-        console.info("Ramp", ramp);
+        await registers.compressorRamp.set(ramp);
     }
 
     async function sweepRamp(from, to) {
@@ -54,7 +54,7 @@ module.exports = async config => {
             async enter() {
                 await sweepRamp(0, 100);
                 await setRelay(true);
-                await asyncWait(1000);
+                await asyncWait(2000);
                 await setRamp(0);
                 checkSystemError();
                 await registers.systemMode.set(SystemMode.WORKING);
@@ -74,8 +74,8 @@ module.exports = async config => {
             led: [5, 0, 5, 0, 0, 50, 255],
             async enter() {
                 await setRamp(100);
+                await asyncWait(2000);
                 await setRelay(false);
-                await asyncWait(1000);
                 await sweepRamp(100, 50);
                 checkSystemError();
                 await registers.systemMode.set(SystemMode.STAND_BY);

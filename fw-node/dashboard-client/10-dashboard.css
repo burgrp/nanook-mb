@@ -36,9 +36,16 @@ span {
 }
 
 .registers .register .value .number {
-    color: white;
+    color: #ebebeb;
 }
 
+.registers .register.goesDown .value .number {
+    color: #acd8ff;
+}
+
+.registers .register.goesUp .value .number {
+    color: #ffaeae;
+}
 
 .registers .register .value .unit {
     margin-left: 0.2em;
