@@ -17,11 +17,15 @@ class GWHP: public i2c::hw::BufferedSlave {
 public:
 
 	rgbLed::Driver rgbLed;
+	e2v::Driver e2v;
 
 	void init(int i2cAddress) {
 
 		// RGB LED
 		rgbLed.init(&target::GPIOB, 3, 1, 0, &target::TIM16);
+
+		// E2V
+		e2v.init(&target::GPIOA, 3, 4, 5, 6, 7, &target::TIM17);
 
 		// I2C
 		target::GPIOA.AFRH.setAFRH(9, 4);
@@ -56,19 +60,23 @@ void interruptHandlerTIM16() {
 	gwhp.rgbLed.handleInterrupt();
 }
 
+void interruptHandlerTIM17() {
+	gwhp.e2v.handleInterrupt();
+}
+
 void initApplication() {
 
-	// enable ports A, B, F
 	target::RCC.AHBENR.setIOPAEN(true);
 	target::RCC.AHBENR.setIOPBEN(true);
 	target::RCC.AHBENR.setIOPFEN(true);
-	// enable I2C1
 	target::RCC.APB1ENR.setC_EN(1, 1);
-
 	target::RCC.APB2ENR.setTIM16EN(1);
+	target::RCC.APB2ENR.setTIM17EN(1);
 
 	target::NVIC.ISER.setSETENA(1 << target::interrupts::External::I2C1);
 	target::NVIC.ISER.setSETENA(1 << target::interrupts::External::TIM16);
+	target::NVIC.ISER.setSETENA(1 << target::interrupts::External::TIM17);
 
-	gwhp.init(0x73);	
+	gwhp.init(0x73);
+
 }
