@@ -6,6 +6,7 @@
   "dependencies": {
     "@device.farm/appglue": "1.0.10",
     "@device.farm/usb-i2c-driver": "1.0.1",
+    "@device.farm/webglue": "1.0.2",
     "fast-deep-equal": "2.0.1"
   }
 }

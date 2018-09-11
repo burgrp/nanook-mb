@@ -1,0 +1,46 @@
+body {
+    font-family: sans-serif;
+    color: #d9d1d1;
+    background-color: #212121;
+    margin: 2em;
+}
+
+div {
+    display: flex;
+    flex-direction: column;
+}
+
+span {
+    display: flex;
+    flex-direction: row;
+}
+
+.registers {
+    flex-direction: column;
+}
+
+.registers .register {
+    flex-direction: row;
+    margin: .1em;
+    padding: .3em;
+    align-items: flex-start;
+}
+
+.registers .register {
+    border-bottom: 1px dotted gray;
+}
+
+.registers .register .name {
+    min-width: 20em;
+    font-size: 0.8em;
+}
+
+.registers .register .value .number {
+    color: white;
+}
+
+
+.registers .register .value .unit {
+    margin-left: 0.2em;
+    font-size: 0.9em;
+}

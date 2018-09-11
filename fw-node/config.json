@@ -75,5 +75,14 @@
                 }
             }
         }
+    },
+    "web": {
+        "module": "@device.farm/webglue",
+        "modules": [
+            {
+                "module": "./dashboard.js",
+                "controller": "-> controller"
+            }
+        ]
     }
 }
