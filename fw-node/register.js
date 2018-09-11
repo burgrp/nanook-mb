@@ -4,16 +4,27 @@ module.exports = (key, name, value, unit) => {
 
     let listeners = [];
 
+    async function checkedListener(listener, register) {
+        try {
+            await listener(register);
+        } catch (e) {
+            console.error(e);
+            if (register.exceptionHandler) {
+                await register.exceptionHandler(e, register);
+            } 
+        }
+    }
+
     return {
 
         key,
         name,
         value,
         unit,
-
+      
         async watch(listener) {
             listeners.push(listener);
-            await listener(this);
+            await checkedListener(listener, this);
         },
 
         async set(value, error) {
@@ -21,7 +32,7 @@ module.exports = (key, name, value, unit) => {
                 this.value = value;
                 this.error = error;
                 for (let listener of listeners) {
-                    await listener(this);
+                    await checkedListener(listener, this);
                 }
             }
         },

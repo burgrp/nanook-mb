@@ -8,6 +8,36 @@ module.exports = async config => {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
+    function checkSystemError() {
+        if (registers.systemMode.value === SystemMode.ERROR) {
+            throw "Action aborted - system is in error state";
+        }
+    }
+
+
+    async function setRelay(state) {
+        checkSystemError();
+        console.info("Switching relay", state ? "ON" : "OFF");
+    }
+
+    async function setRamp(ramp) {
+        checkSystemError();
+        console.info("Ramp", ramp);
+    }
+
+    async function sweepRamp(from, to) {
+
+        let r = from;
+        let m = from < to ? 1 : -1;
+
+        while (r * m <= to * m) {
+            await setRamp(r);
+            r += m;
+            await asyncWait(50);
+        }
+
+    }
+
     const SystemMode = {
         STAND_BY: {
             name: "Stand by",
@@ -22,10 +52,11 @@ module.exports = async config => {
             name: "Ramp up",
             led: [5, 0, 5, 0, 100, 255, 0],
             async enter() {
-                for (let c = 0; c <= 100; c++) {
-                    await asyncWait(100);
-                    console.info("Ramp up", c);
-                }
+                await sweepRamp(0, 100);
+                await setRelay(true);
+                await asyncWait(1000);
+                await setRamp(0);
+                checkSystemError();
                 await registers.systemMode.set(SystemMode.WORKING);
             }
         },
@@ -42,10 +73,11 @@ module.exports = async config => {
             name: "Ramp down",
             led: [5, 0, 5, 0, 0, 50, 255],
             async enter() {
-                for (let c = 100; c >= 50; c--) {
-                    await asyncWait(100);
-                    console.info("Ramp down", c);
-                }
+                await setRamp(100);
+                await setRelay(false);
+                await asyncWait(1000);
+                await sweepRamp(100, 50);
+                checkSystemError();
                 await registers.systemMode.set(SystemMode.STAND_BY);
             }
         },
@@ -76,7 +108,19 @@ module.exports = async config => {
         async start() {
             console.info("Starting controller...");
 
-            Object.values(registers).forEach(register => {
+            for (let key in registers) {
+                let register = registers[key];
+
+                register.exceptionHandler = async e => {
+                    try {
+                        if (!registers.systemError.value) {
+                            await registers.systemError.set(`Register ${register.key} listener error: ${e.message || e}`);
+                        }
+                    } catch(e2) {
+                        console.error("Critical error: could not set system error", e, "because of", e2);
+                    }
+                }
+
                 register.watch(async () => {
                     if (register.error) {
                         await registers.systemError.set(`Register ${register.key} error: ${register.error}`);
@@ -93,12 +137,12 @@ module.exports = async config => {
 
                     await registers.shouldWork.set(registers.hotFrigoPressure.value < 10);
 
-                    if (registers.systemMode.value.check) {
+                    if (registers.systemMode.value.check) {                        
                         await registers.systemMode.value.check();
                     }
 
                 });
-            });
+            };
 
             registers.systemMode.watch(async systemMode => {
                 console.info("----------- " + systemMode.value.name + " -----------");
@@ -117,9 +161,6 @@ module.exports = async config => {
                     await registers.systemMode.set(SystemMode.ERROR);
                 }
             });
-
-
-            //console.info(JSON.stringify(registers, null, 2));
 
         }
     }
