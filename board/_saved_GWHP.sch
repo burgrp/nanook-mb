@@ -699,12 +699,6 @@ Text Label 9300 3050 0    60   ~ 0
 COMP_L2
 Text Label 9300 3850 0    60   ~ 0
 COMP_L3
-NoConn ~ 9300 1950
-NoConn ~ 9300 2050
-NoConn ~ 9300 2750
-NoConn ~ 9300 2850
-NoConn ~ 9300 3550
-NoConn ~ 9300 3650
 $Comp
 L MMBT3904 T1
 U 1 1 5B7C8C98
@@ -1519,11 +1513,11 @@ Wire Wire Line
 Wire Wire Line
 	9300 2150 9300 2250
 Wire Wire Line
-	8650 2150 8650 2050
+	8650 1850 8650 2150
 Wire Wire Line
-	8650 2950 8650 2850
+	8650 2650 8650 2950
 Wire Wire Line
-	8650 3750 8650 3650
+	8650 3450 8650 3750
 Wire Wire Line
 	8700 2450 8150 2450
 Wire Wire Line
@@ -2055,4 +2049,22 @@ Wire Wire Line
 Wire Wire Line
 	2050 6000 2050 5950
 Connection ~ 1800 6000
+Wire Wire Line
+	8650 1850 9300 1850
+Wire Wire Line
+	9300 1850 9300 2050
+Connection ~ 8650 2050
+Connection ~ 9300 1950
+Wire Wire Line
+	8650 2650 9300 2650
+Wire Wire Line
+	9300 2650 9300 2850
+Connection ~ 8650 2850
+Wire Wire Line
+	8650 3450 9300 3450
+Wire Wire Line
+	9300 3450 9300 3650
+Connection ~ 8650 3650
+Connection ~ 9300 3550
+Connection ~ 9300 2750
 $EndSCHEMATC
