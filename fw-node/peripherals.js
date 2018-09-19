@@ -92,8 +92,8 @@ module.exports = async config => {
 
     });
 
-    function createActorRegister(key, name, value, writeHandler) {
-        let register = createRegister(key, name, value);
+    function createActorRegister(key, name, value, unit, writeHandler) {
+        let register = createRegister(key, name, value, unit);
         register.write = async (value) => {
             console.info("->", key, value);
             try {
@@ -107,14 +107,19 @@ module.exports = async config => {
         registers.push(register);
     }
 
-    createActorRegister("rgbLed", "RGB LED", undefined, async value => {
+    createActorRegister("rgbLed", "RGB LED", undefined, undefined, async value => {
         await i2c.write(obpAddress, [1, ...value]);
     });
 
-    createActorRegister("compressorRamp", "Compressor Ramp", 0, async value => {
+    createActorRegister("compressorRamp", "Compressor Ramp", 0, "%", async value => {
         //await i2c.write(obpAddress, [1, ...value]);
     });
-    createActorRegister("compressorRelay", "Compressor Relay", false, async value => {
+
+    createActorRegister("compressorRelay", "Compressor Relay", false, undefined, async value => {
+        //await i2c.write(obpAddress, [1, ...value]);
+    });
+
+    createActorRegister("eevLevel", "Expansion Valve", 50, "%", async value => {
         //await i2c.write(obpAddress, [1, ...value]);
     });
 
