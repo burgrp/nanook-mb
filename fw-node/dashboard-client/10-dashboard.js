@@ -30,6 +30,11 @@ wg.pages.home = {
             .toggleClass("goesDown", diff < 0)
             .toggleClass("goesUp", diff > 0)
             ;
+
+            if (register.key === "compressorRamp" || register.key === "compressorRelay") {
+                let alpha = registers.compressorRelay.value? 1: registers.compressorRamp.value / 100;
+                $("#svg-compressor").css("fill", `rgb(0, 160, 100, ${alpha})`);
+            }
         }
 
         function updateAllRegisters() {

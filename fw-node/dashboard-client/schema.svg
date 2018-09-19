@@ -27,10 +27,10 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.1582662"
-     inkscape:cx="400.14297"
-     inkscape:cy="252.20902"
+     inkscape:cx="471.43"
+     inkscape:cy="506.54089"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="g924"
      showgrid="false"
      inkscape:window-width="2560"
      inkscape:window-height="1378"
@@ -118,10 +118,16 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-177.93751)"
-     style="display:inline"
-     sodipodi:insensitive="true">
+     style="display:inline">
     <g
        id="g924">
+      <path
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.5291667;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.94117647"
+         d="m 103.03268,193.29592 c -4.502256,-1.4e-4 -8.152088,3.6497 -8.151958,8.15195 1.53e-4,4.50206 3.649903,8.15157 8.151958,8.15144 4.50185,-1.5e-4 8.15129,-3.64959 8.15144,-8.15144 1.3e-4,-4.50205 -3.64939,-8.1518 -8.15144,-8.15195 z m -4.417608,4.31394 9.018588,1.60146 v 4.53462 l -9.018588,1.60197 z"
+         id="svg-compressor"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccccccccc"
+         inkscape:label="#circle896" />
       <g
          transform="translate(0,14.816669)"
          id="g907">
@@ -145,22 +151,6 @@
            id="path901"
            inkscape:connector-curvature="0"
            sodipodi:nodetypes="cc" />
-      </g>
-      <g
-         transform="translate(2.4722431,-15.85144)"
-         id="g858">
-        <circle
-           style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.5291667;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.94117647"
-           id="path844"
-           cx="100.56016"
-           cy="217.29907"
-           r="8.15172" />
-        <path
-           id="path852"
-           style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.52916664;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.94117647"
-           d="m 97.000776,221.19941 7.118764,-1.60188 v -4.53454 m -7.118764,6.13642 v 0 -7.73829 l 7.118764,1.60187"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="cccccc" />
       </g>
       <g
          transform="translate(0,14.816669)"
