@@ -5,6 +5,10 @@ body {
     margin: 2em;
 }
 
+svg * {
+    font-family: unset !important;
+}
+
 div {
     display: flex;
     flex-direction: column;
@@ -15,12 +19,13 @@ span {
     flex-direction: row;
 }
 
-.registers {
-    flex-direction: column;
+.dashboard {
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
 }
 
 .registers .register {
-    flex-direction: row;
     margin: .1em;
     padding: .3em;
     align-items: flex-start;
@@ -35,19 +40,17 @@ span {
     font-size: 0.8em;
 }
 
-.registers .register .value .number {
+.registers .register .value {
     color: #ebebeb;
 }
 
-.registers .register.goesDown .value .number {
-    color: #acd8ff;
+.register-bound.goesDown {
+    color: #acd8ff !important;
+    fill: #acd8ff !important;
 }
 
-.registers .register.goesUp .value .number {
-    color: #ffaeae;
+.register-bound.goesUp {
+    color: #ffaeae !important;
+    fill: #ffaeae !important;
 }
 
-.registers .register .value .unit {
-    margin-left: 0.2em;
-    font-size: 0.9em;
-}
