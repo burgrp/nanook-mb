@@ -92,6 +92,7 @@ wg.pages.home = {
                         ])
                     )                
                 ).onRegisterChanged(cr => {
+                        console.info(cr.key);
                     updateRegister(cr)
                 }),
                 DIV("schema", span => {

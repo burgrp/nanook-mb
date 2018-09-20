@@ -9,7 +9,7 @@ module.exports = (key, name, value, unit) => {
             console.error(e);
             if (register.exceptionHandler) {
                 await register.exceptionHandler(e, register);
-            } 
+            }
         }
     }
 
@@ -19,7 +19,7 @@ module.exports = (key, name, value, unit) => {
         name,
         value,
         unit,
-      
+
         watch(listener) {
             listeners.push(listener);
         },
@@ -27,10 +27,24 @@ module.exports = (key, name, value, unit) => {
         async set(value, error) {
             if (this.value !== value || this.error !== error) {
                 this.value = value;
-                this.error = error? error.message || error: undefined;
-                for (let listener of listeners) {
-                    await checkedListener(listener, this);
-                }    
+                this.error = error ? error.message || error : undefined;
+                await this.changed();
+            }
+        },
+
+        async changed() {
+            for (let listener of listeners) {
+                await checkedListener(listener, this);
+            }
+        },
+
+        snapshot() {
+            return JSON.stringify(value);
+        },
+
+        async check(snapshot) {
+            if (JSON.stringify(this.value) !== snapshot) {
+                await this.changed();
             }
         },
 
