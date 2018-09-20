@@ -6,6 +6,7 @@ module.exports = async config => {
     let registers;
 
     registers = [
+        createRegister("controllerEnabled", "Controller", false),
         createRegister("compressorControl", "Compressor Control", false),
         ...config.peripherals.registers
     ];
@@ -21,14 +22,14 @@ module.exports = async config => {
     function setSystemError(key, message) {
         if (systemErrors[key] !== message) {
             if (message === undefined) {
-                delete systemErrors[key];                
+                delete systemErrors[key];
             } else {
                 systemErrors[key] = message;
             }
             systemErrorsListeners.forEach(listener => {
                 try {
                     listener(systemErrors);
-                } catch(e) {
+                } catch (e) {
                     console.error("Error in system error listener", e);
                 }
             });
@@ -37,14 +38,35 @@ module.exports = async config => {
 
     Object.values(registers).forEach(register => {
         register.watch(async register => {
-            setSystemError(`register-${register.key}`, register.error? `Register ${register.key} error: ${register.error.message || register.error}`: undefined);
+            setSystemError(`register-${register.key}`, register.error ? `Register ${register.key} error: ${register.error.message || register.error}` : undefined);
+            checkErrors();
         });
+    });
+
+
+    async function checkErrors() {
+        if (registers.controllerEnabled.value && Object.keys(systemErrors).length) {
+            await registers.controllerEnabled.set(false);
+        }
+    }
+
+    registers.controllerEnabled.watch(async controllerEnabled => {
+        await checkErrors();
+        if (controllerEnabled.value) {
+            console.info("CONTROLLER ENABLED");
+        } else {
+            console.info("CONTROLLER DISABLED");
+            await registers.compressorControl.set(false);
+            await registers.coldWaterPump.set(false);
+            await registers.hotWaterPump.set(false);
+            await registers.eevPosition.set(0);
+        }
     });
 
     let rampLock = 0;
     let rampCancel = "Ramp cancelled";
 
-    registers.compressorControl.watch(reg => {
+    registers.compressorControl.watch(compressorControl => {
         async function ramp() {
 
             let myLock = ++rampLock;
@@ -60,7 +82,7 @@ module.exports = async config => {
             let rampUpStart = config.rampUpStart || 20;
             let rampDownStop = config.rampDownStop || 40;
 
-            if (reg.value) {
+            if (compressorControl.value) {
                 for (let r = Math.max(rampUpStart, registers.compressorRamp.value); r <= 100; r++) {
                     checkLock();
                     await registers.compressorRamp.set(r);

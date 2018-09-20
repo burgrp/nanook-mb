@@ -27,6 +27,22 @@ button {
     border-radius: 0.2em;
     border: none;
     padding: 0.2em 1em;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: smaller;
+}
+
+button:active {
+  transform: translateX(2px) translateY(2px);
+}
+
+button.start {
+    background-color: #1cc37a;
+}
+
+button.stop {
+    background-color: #e16161;
 }
 
 .dashboard {
@@ -37,7 +53,7 @@ button {
 
 .registers .register {
     padding: .3em;
-    border-bottom: 1px dotted gray;
+    border-bottom: 1px dashed #4a4a4a;
     align-items: center;
 }
 
@@ -52,13 +68,18 @@ button {
 }
 
 .register-bound.goesDown {
-    color: #acd8ff !important;
-    fill: #acd8ff !important;
+    color: #8cc7fb !important;
+    fill: #8cc7fb !important;
 }
 
-.register-bound.goesUp {
+.register-bound.goesUp, .register-bound.off {
     color: #ffaeae !important;
     fill: #ffaeae !important;
+}
+
+.register-bound.on {
+    color: #7dffc6 !important;
+    fill: #7dffc6 !important;
 }
 
 .register .controls {
@@ -68,10 +89,6 @@ button {
 
 .register .controls * {
     margin-left: 0.5em;
-}
-
-.register .controls button {
-    text-transform: capitalize;
 }
 
 .notifications, .system-errors {

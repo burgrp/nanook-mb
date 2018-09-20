@@ -26,17 +26,20 @@ wg.pages.home = {
         }
 
         function stopStartButtons(register) {
-                return [
-                    BUTTON().text("Start").click(e => setRegister(register, true)),
-                    BUTTON().text("Stop").click(e => setRegister(register, false))
-                ];
+            return [
+                BUTTON("start").text("Start").click(e => setRegister(register, true)),
+                BUTTON("stop").text("Stop").click(e => setRegister(register, false))
+            ];
         }
 
         let controls = {
+            controllerEnabled: stopStartButtons("controllerEnabled"),
             compressorControl: stopStartButtons("compressorControl"),
             coldWaterPump: stopStartButtons("coldWaterPump"),
             hotWaterPump: stopStartButtons("hotWaterPump"),
-            eevPosition: [INPUT("slider", {type: "range", id: "eevPosition", min: 0, max: 100})]
+            eevPosition: [INPUT("slider", { type: "range", id: "eevPosition", min: 0, max: 100 }).change(async e => {
+                setRegister("eevPosition", $(e.target).val());
+            })]
         }
 
         let systemErrors = DIV("system-errors");
@@ -72,6 +75,8 @@ wg.pages.home = {
                 )
                 .toggleClass("goesDown", diff < 0)
                 .toggleClass("goesUp", diff > 0)
+                .toggleClass("on", typeof register.value === "boolean" && register.value)
+                .toggleClass("off", typeof register.value === "boolean" && !register.value)
                 ;
 
             if (register.key === "compressorRamp" || register.key === "compressorRelay") {
@@ -80,9 +85,7 @@ wg.pages.home = {
             }
 
             if (register.key === "eevPosition") {
-                $("#eevPosition").val(register.value).change(e => {
-                     setRegister("eevPosition", $(e.target).val());
-                });
+                $("#eevPosition").val(register.value);
             }
 
         }
