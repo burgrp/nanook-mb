@@ -1,5 +1,5 @@
 {
-  "name": "ias3a-test",
+  "name": "@device.farm/gwhp",
   "version": "1.0.0",
   "main": "test.js",
   "license": "ISC",
@@ -7,5 +7,9 @@
     "@device.farm/appglue": "1.0.10",
     "@device.farm/usb-i2c-driver": "1.0.1",
     "@device.farm/webglue": "1.0.2"
-  }
+  },
+	"bin": {
+		"gwhp": "src/gwhp.js"
+	}
+
 }
