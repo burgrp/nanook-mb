@@ -121,9 +121,18 @@ module.exports = async config => {
         //await i2c.write(obpAddress, [1, ...value]);
     });
 
-    createActorRegister("eevLevel", "Expansion Valve", 50, "%", async value => {
+    createActorRegister("eevPosition", "Expansion Valve", 30, "%", async value => {
         //await i2c.write(obpAddress, [1, ...value]);
     });
+
+    createActorRegister("coldWaterPump", "Cold Side Circulation Pump", false, undefined, async value => {
+        //await i2c.write(obpAddress, [1, ...value]);
+    });
+
+    createActorRegister("hotWaterPump", "Hot Side Circulation Pump", false, undefined, async value => {
+        //await i2c.write(obpAddress, [1, ...value]);
+    });
+
 
     async function tick() {
         for (let ticker of tickers) {

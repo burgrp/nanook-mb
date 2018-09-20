@@ -3,7 +3,8 @@ module.exports = async config => {
     let dashboard = {
         client: "dashboard-client",
         events: {
-            registerChanged: {}
+            registerChanged: {},
+            systemErrorsChanged: {}
         },
         api: {
             dashboard: {
@@ -13,16 +14,22 @@ module.exports = async config => {
 
                 async setRegister(regName, value) {
                     config.controller.registers[regName].set(value);
+                },
+
+                async getSystemErrors() {
+                    return config.controller.systemErrors;
                 }
             }
         }
     }
 
+    config.controller.watchSystemErrors(systemErrors => {
+        dashboard.events.systemErrorsChanged(systemErrors);
+    });
+
     Object.values(config.controller.registers).forEach(register => {
         register.watch(() => {            
-            if (dashboard.events.registerChanged instanceof Function) {
-                dashboard.events.registerChanged(register);
-            }
+            dashboard.events.registerChanged(register);
         })
     });
 

@@ -28,23 +28,9 @@ module.exports = (key, name, value, unit) => {
             if (this.value !== value || this.error !== error) {
                 this.value = value;
                 this.error = error ? error.message || error : undefined;
-                await this.changed();
-            }
-        },
-
-        async changed() {
-            for (let listener of listeners) {
-                await checkedListener(listener, this);
-            }
-        },
-
-        snapshot() {
-            return JSON.stringify(value);
-        },
-
-        async check(snapshot) {
-            if (JSON.stringify(this.value) !== snapshot) {
-                await this.changed();
+                for (let listener of listeners) {
+                    await checkedListener(listener, this);
+                }    
             }
         },
 
