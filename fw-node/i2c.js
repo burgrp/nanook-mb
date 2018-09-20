@@ -1,5 +1,3 @@
-const usbI2c = require("@device.farm/usb-i2c-driver");
-
 module.exports = config => {
     
     let i2c;
@@ -7,7 +5,7 @@ module.exports = config => {
     async function withInterface(action) {
         
         if (!i2c) {
-            i2c = usbI2c.open();            
+            i2c = require("@device.farm/usb-i2c-driver").open();            
         }
 
         try {
