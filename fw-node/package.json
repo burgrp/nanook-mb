@@ -1,12 +1,14 @@
 {
   "name": "@device.farm/gwhp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "test.js",
   "license": "ISC",
   "dependencies": {
     "@device.farm/appglue": "1.0.10",
-    "@device.farm/usb-i2c-driver": "1.0.1",
     "@device.farm/webglue": "1.0.2"
+  },
+  "optionalDependencies": {
+    "@device.farm/usb-i2c-driver": "1.0.1"
   },
   "bin": {
     "gwhp": "main.js"
