@@ -5,6 +5,10 @@ body {
     margin: 2em;
 }
 
+body, button, td {
+    font-size: 12pt;  
+}
+
 svg * {
     font-family: unset !important;
 }
@@ -19,6 +23,12 @@ span {
     flex-direction: row;
 }
 
+button {
+    border-radius: 0.2em;
+    border: none;
+    padding: 0.2em 1em;
+}
+
 .dashboard {
     flex-wrap: wrap;
     align-items: center;
@@ -26,13 +36,9 @@ span {
 }
 
 .registers .register {
-    margin: .1em;
     padding: .3em;
-    align-items: flex-start;
-}
-
-.registers .register {
     border-bottom: 1px dotted gray;
+    align-items: center;
 }
 
 .registers .register .name {
@@ -42,6 +48,7 @@ span {
 
 .registers .register .value {
     color: #ebebeb;
+    min-width: 5em;
 }
 
 .register-bound.goesDown {
@@ -54,3 +61,26 @@ span {
     fill: #ffaeae !important;
 }
 
+.register .controls {
+    align-self: flex-start;
+    margin-left: 0.5em;
+}
+
+.register .controls * {
+    margin-left: 0.5em;
+}
+
+.notifications {
+    position: fixed;
+    background-color: #a10000;
+    border-radius: 0.5em;
+    padding: 0 2em 1em 2em;
+    right: 1em;
+    top: 1em;
+    box-shadow: 0 0 1em black;
+    border: 1px #ffc2c1 solid;
+}
+
+.notifications .notification {
+    margin-top: 1em;
+}

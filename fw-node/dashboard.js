@@ -9,6 +9,10 @@ module.exports = async config => {
             dashboard: {
                 async getRegisters() {
                     return config.controller.registers;
+                },
+
+                async setRegister(regName, value) {
+                    config.controller.registers[regName].set(value);
                 }
             }
         }

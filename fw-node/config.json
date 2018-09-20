@@ -1,7 +1,6 @@
 {
     "controller": {
         "module": "./controller.js",
-        "rampSec": 20,
         "peripherals": {
             "module": "./peripherals.js",
             "tickMs": 500,

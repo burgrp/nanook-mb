@@ -1,5 +1,3 @@
-const deepEqual = require("fast-deep-equal");
-
 module.exports = (key, name, value, unit) => {
 
     let listeners = [];
@@ -22,18 +20,17 @@ module.exports = (key, name, value, unit) => {
         value,
         unit,
       
-        async watch(listener) {
+        watch(listener) {
             listeners.push(listener);
-            await checkedListener(listener, this);
         },
 
         async set(value, error) {
-            if (!deepEqual(this.value, value) || !deepEqual(this.error, error)) {
+            if (this.value !== value || this.error !== error) {
                 this.value = value;
-                this.error = error;
+                this.error = error? error.message || error: undefined;
                 for (let listener of listeners) {
                     await checkedListener(listener, this);
-                }
+                }    
             }
         },
 

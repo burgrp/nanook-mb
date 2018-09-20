@@ -4,6 +4,39 @@ wg.pages.home = {
 
         let registers = await wg.dashboard.getRegisters();
 
+        let notifications = DIV("notifications").hide().click(e => {
+            notifications.hide();
+        });
+
+        function showNotification(message) {
+            let notification = DIV("notification").text(message);
+            notifications.append(notification).fadeIn();
+            setTimeout(() => {
+                notification.fadeOut(() => {
+                    notification.remove();
+                    if (!notifications.children().length) {
+                        notifications.hide();
+                    }
+                });
+            }, 5000);
+        }
+
+        function setRegister(regName, value) {
+            wg.dashboard.setRegister(regName, value).catch(e => {
+                console.error(e);
+                showNotification(e);
+            });
+        }
+
+        let controls = {
+            compressorControl(controlContainer) {
+                controlContainer.append([
+                    BUTTON().text("Start").click(e => setRegister("compressorControl", true)),
+                    BUTTON().text("Stop").click(e => setRegister("compressorControl", false))
+                ]);
+            }
+        }
+
         function updateRegister(register) {
             
             let diff;
@@ -24,6 +57,8 @@ wg.pages.home = {
                         JSON.stringify(register.value): 
                     typeof register.value === "number"?
                         register.value.toFixed(1):
+                        typeof register.value === "boolean"?
+                        register.value? "ON": "OFF":
                         register.value === undefined? "-": register.value
                 ) + (register.unit? " " + register.unit: "")
             )
@@ -42,12 +77,18 @@ wg.pages.home = {
         }
 
         container.append(
+            notifications,
             SPAN("dashboard", [
                 DIV("registers",
                     Object.values(registers).map(register => 
                         SPAN("register", [    
                             SPAN("name").text(register.name),
-                            SPAN("value register-bound " + register.key)
+                            SPAN("value register-bound " + register.key),
+                            SPAN("controls", controlsSpan => {
+                                if (controls[register.key]) {
+                                    controls[register.key](controlsSpan);
+                                }
+                            })
                         ])
                     )                
                 ).onRegisterChanged(cr => {

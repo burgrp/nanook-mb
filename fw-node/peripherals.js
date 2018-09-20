@@ -92,17 +92,19 @@ module.exports = async config => {
 
     });
 
-    function createActorRegister(key, name, value, unit, writeHandler) {
+    function createActorRegister(key, name, value, unit, setHandler) {
         let register = createRegister(key, name, value, unit);
-        register.write = async (value) => {
-            console.info("->", key, value);
+        let superSet = register.set;
+        register.set = async (value, error) => {
             try {
-                await writeHandler(value);
-                register.set(value);
+                if (!error) {
+                    console.info("->", key, value);
+                    await setHandler.call(register, value);
+                }
+                await superSet.call(register, value, error);
             } catch (e) {
                 register.failed(e.message || e);
             }
-            
         };
         registers.push(register);
     }
