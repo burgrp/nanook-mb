@@ -1,7 +1,7 @@
 module.exports = async config => {
 
     let dashboard = {
-        client: "dashboard-client",
+        client: __dirname + "/dashboard-client",
         events: {
             registerChanged: {},
             systemErrorsChanged: {}
