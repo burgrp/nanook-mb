@@ -1,51 +1,22 @@
 namespace e2v {
 
-// const unsigned char phases[8] = {
-//     0b0001,
-//     0b0101,
-//     0b0100,
-//     0b0110,
-//     0b0010,
-//     0b1010,
-//     0b1000,
-//     0b1001
-// };
-
-// const unsigned char phases[16] = {
-//     0b0001,
-//     0b0000,
-//     0b0101,
-//     0b0000,
-//     0b0100,
-//     0b0000,
-//     0b0110,
-//     0b0000,
-//     0b0010,
-//     0b0000,
-//     0b1010,
-//     0b0000,
-//     0b1000,
-//     0b0000,
-//     0b1001,
-//     0b0000
-// };
-
-const unsigned char phases[4] = {
+const unsigned char phases[8] = {
     0b0001,
+    0b0101,
     0b0100,
+    0b0110,
     0b0010,
-    0b1000
+    0b1010,
+    0b1000,
+    0b1001
 };
 
-// const unsigned char phases[8] = {
+
+// const unsigned char phases[4] = {
 //     0b0001,
-//     0b0000,
 //     0b0100,
-//     0b0000,
 //     0b0010,
-//     0b0000,
-//     0b1000,
-//     0b0000
+//     0b1000
 // };
 
 class Driver {
@@ -56,7 +27,7 @@ class Driver {
     volatile target::tim_16_17::Peripheral* timer;
 
     int counter;
-    int stop = 4;
+    int stop;
 
 public:
     void init(
@@ -77,41 +48,46 @@ public:
         this->timer = timer;
 
         for (int p = 0; p < 4; p++) {
+            port->ODR.setODR(pins[p], 0);
             port->MODER.setMODER(pins[p], 1);
         }
 
+        port->ODR.setODR(pinNSleep, 0);
         port->MODER.setMODER(pinNSleep, 1);
-port->ODR.setODR(pinNSleep, 1);              
+
         timer->DIER.setUIE(1);
         
-        timer->ARR.setARR(0xFFFF);
-        timer->PSC.setPSC(10);
-
-        // timer->ARR.setARR(53333);
-        // timer->PSC.setPSC(1); // 3=50Hz, 1=150Hz
+        timer->ARR.setARR(0);
+        timer->PSC.setPSC(0);
 
         timer->CR1.setCEN(1);
+    }
+
+    void run(int fullSteps, bool fast) {
+        timer->PSC.setPSC(fast? 1: 3); // 3=50Hz, 1=150Hz
+        timer->ARR.setARR(53333);
+        stop = counter + fullSteps * 2;
     }
 
 
     void handleInterrupt() {
         timer->SR.setUIF(0);
 
-        int sr[2] = {0, 0};
+        int bssr[2] = {0, 0};
         for (int p = 0; p < 4; p++) {
-            sr[(phases[counter & (sizeof(phases) - 1)] >> p) & 1] |= 1 << pins[p];
+            bssr[(phases[counter & (sizeof(phases) - 1)] >> p) & 1] |= 1 << pins[p];
         }
-        port->BSRR = sr[1] | sr[0] << 16;
+        port->BSRR = bssr[1] | bssr[0] << 16;
+        port->ODR.setODR(pinNSleep, counter != stop);
 
-        //port->ODR.setODR(pinNSleep, counter != stop);
-
-        counter++;
-
-        // if (counter < stop) {
-        //     counter++;
-        // } else if (counter > stop) {
-        //     counter--;
-        // }
+        if (counter < stop) {
+            counter++;
+        } else if (counter > stop) {
+            counter--;
+        } else {
+            timer->ARR.setARR(0);
+            timer->PSC.setPSC(0);
+        }
     }
 
 };

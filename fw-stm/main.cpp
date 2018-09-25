@@ -2,7 +2,8 @@ const int VALUE_UNKNOWN = -1;
 
 enum Command {
 	CMD_NONE,
-	CMD_I2C_SET_RGB_LED
+	CMD_I2C_SET_RGB_LED,
+	CMD_RUN_E2V
 };
 
 class GWHP: public i2c::hw::BufferedSlave {
@@ -11,6 +12,11 @@ class GWHP: public i2c::hw::BufferedSlave {
 		unsigned char command;
 		union {
 			rgbLed::Setting rgbLed;
+			struct {
+				unsigned char fullStepsLow;
+				unsigned char fullStepsHigh;
+				unsigned char flags;
+			} e2vFullSteps;
 		};
 	} i2cRxBuffer;
 
@@ -42,6 +48,15 @@ public:
 			switch (command) {
 				case CMD_I2C_SET_RGB_LED: {
 					rgbLed.set(&i2cRxBuffer.rgbLed);
+					break;
+				}
+				case CMD_RUN_E2V: {
+					int fullSteps = i2cRxBuffer.e2vFullSteps.fullStepsLow | i2cRxBuffer.e2vFullSteps.fullStepsHigh >> 8;
+					if (!(i2cRxBuffer.e2vFullSteps.flags & 1)) {
+						fullSteps = -fullSteps;
+					}
+					bool fast = i2cRxBuffer.e2vFullSteps.flags & 2;
+					e2v.run(fullSteps, fast);
 					break;
 				}
 			}

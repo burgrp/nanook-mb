@@ -121,8 +121,25 @@ module.exports = async config => {
         //await i2c.write(obpAddress, [1, ...value]);
     });
 
-    createActorRegister("eevPosition", "Expansion Valve", 30, "%", async value => {
-        //await i2c.write(obpAddress, [1, ...value]);
+
+    async function e2vRun(fullSteps, fast) {
+        console.info("E2V to run " + fullSteps + " steps");
+        let flags = 0;
+        if (fullSteps > 0) {
+            flags |= 1;
+        }
+        if (fast) {
+            flags |= 2;
+        }
+        fullSteps = Math.abs(fullSteps);
+        await i2c.write(obpAddress, [2, fullSteps & 0xFF, (fullSteps >> 8) & 0xFF, flags]);
+    }
+
+    let e2vPosition = 0;
+    createActorRegister("eevPosition", "Expansion Valve", 0, "%", async value => {
+        let fullSteps = (value - e2vPosition) * 450 / 100;
+        await e2vRun(fullSteps);
+        e2vPosition = value;        
     });
 
     createActorRegister("coldWaterPump", "Cold Side Circulation Pump", false, undefined, async value => {
