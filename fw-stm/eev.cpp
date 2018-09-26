@@ -1,4 +1,4 @@
-namespace e2v {
+namespace eev {
 
 const unsigned char phases[8] = {
     0b0001,
@@ -26,10 +26,10 @@ class Driver {
     int pinNSleep;
     volatile target::tim_16_17::Peripheral* timer;
 
+public:
     int counter;
     int stop;
 
-public:
     void init(
         volatile target::gpio_a::Peripheral* port,
         int pinA1,
@@ -67,6 +67,10 @@ public:
         timer->PSC.setPSC(fast? 1: 3); // 3=50Hz, 1=150Hz
         timer->ARR.setARR(53333);
         stop = counter + fullSteps * 2;
+    }
+
+    int getPosition() {
+        return counter / 2;
     }
 
 

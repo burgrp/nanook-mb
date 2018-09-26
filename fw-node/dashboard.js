@@ -17,19 +17,19 @@ module.exports = async config => {
                 },
 
                 async setRegister(regName, value) {
-                    config.controller.registers[regName].set(value);
+                    await config.controller.registers[regName].set(value);
                 },
 
                 async setColdWaterPump(state) {
-                    config.controller.setColdWaterPump(state);
+                    await config.controller.setColdWaterPump(state);
                 },
 
                 async setHotWaterPump(state) {
-                    config.controller.setColdWaterPump(state);
+                    await config.controller.setColdWaterPump(state);
                 },
 
                 async eevRun(fullSteps, fast) {
-                    config.controller.eevRun(fullSteps, fast);
+                    await config.controller.eevRun(fullSteps, fast);
                 },
 
             }

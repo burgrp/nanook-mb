@@ -3,27 +3,31 @@ const int VALUE_UNKNOWN = -1;
 enum Command {
 	CMD_NONE,
 	CMD_I2C_SET_RGB_LED,
-	CMD_RUN_E2V
+	CMD_RUN_EEV
 };
 
 class GWHP: public i2c::hw::BufferedSlave {
 
-	struct {
+	struct __attribute__ ((packed)) {
 		unsigned char command;
 		union {
 			rgbLed::Setting rgbLed;
-			struct {
-				unsigned char fullStepsLow;
-				unsigned char fullStepsHigh;
-				unsigned char flags;
-			} e2vFullSteps;
+			struct __attribute__ ((packed)) {
+				short fullSteps;
+				unsigned char fast;
+			} runEev;
 		};
 	} i2cRxBuffer;
+
+	struct __attribute__ ((packed)) {
+		unsigned char outputs;
+		int eevPosition;
+	} i2cTxBuffer;
 
 public:
 
 	rgbLed::Driver rgbLed;
-	e2v::Driver e2v;
+	eev::Driver eev;
 
 	void init(int i2cAddress) {
 
@@ -31,14 +35,19 @@ public:
 		rgbLed.init(&target::GPIOB, 3, 1, 0, &target::TIM16);
 
 		// E2V
-		e2v.init(&target::GPIOA, 3, 4, 5, 6, 7, &target::TIM17);
+		eev.init(&target::GPIOA, 3, 4, 5, 6, 7, &target::TIM17);
 
 		// I2C
 		target::GPIOA.AFRH.setAFRH(9, 4);
 		target::GPIOA.AFRH.setAFRH(10, 4);
 		target::GPIOA.MODER.setMODER(9, 2);
 		target::GPIOA.MODER.setMODER(10, 2);
-		BufferedSlave::init(&target::I2C1, i2cAddress, (unsigned char*)&i2cRxBuffer, sizeof(i2cRxBuffer), NULL, 0);
+		BufferedSlave::init(&target::I2C1, i2cAddress, (unsigned char*)&i2cRxBuffer, sizeof(i2cRxBuffer), (unsigned char*)&i2cTxBuffer, sizeof(i2cTxBuffer));
+	}
+
+	virtual void onTxStart() {                
+		i2cTxBuffer.outputs = 2;
+		i2cTxBuffer.eevPosition = eev.getPosition();
 	}
 
 	virtual void onStop(bool read) {
@@ -50,13 +59,8 @@ public:
 					rgbLed.set(&i2cRxBuffer.rgbLed);
 					break;
 				}
-				case CMD_RUN_E2V: {
-					int fullSteps = i2cRxBuffer.e2vFullSteps.fullStepsLow | i2cRxBuffer.e2vFullSteps.fullStepsHigh >> 8;
-					if (!(i2cRxBuffer.e2vFullSteps.flags & 1)) {
-						fullSteps = -fullSteps;
-					}
-					bool fast = i2cRxBuffer.e2vFullSteps.flags & 2;
-					e2v.run(fullSteps, fast);
+				case CMD_RUN_EEV: {
+					eev.run(i2cRxBuffer.runEev.fullSteps, i2cRxBuffer.runEev.fast);
 					break;
 				}
 			}
@@ -76,7 +80,7 @@ void interruptHandlerTIM16() {
 }
 
 void interruptHandlerTIM17() {
-	gwhp.e2v.handleInterrupt();
+	gwhp.eev.handleInterrupt();
 }
 
 void initApplication() {

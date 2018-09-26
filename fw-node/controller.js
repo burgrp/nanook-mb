@@ -82,32 +82,36 @@ module.exports = async config => {
             let rampUpStart = config.rampUpStart || 20;
             let rampDownStop = config.rampDownStop || 40;
 
+            let actualRelay = registers.compressorRelay.value;
+            if (actualRelay === undefined) {
+                throw "Unknow state of compressor relay";
+            }
+
+            let actualRamp = registers.compressorRamp.value;
+            if (actualRamp === undefined) {
+                throw "Unknow state of compressor ramp";
+            }
+
             if (compressorControl.value) {
-                for (let r = Math.max(rampUpStart, registers.compressorRamp.value); r <= 100; r++) {
-                    checkLock();
-                    await config.peripherals.setCompressorRamp(r);
+                for (let r = Math.max(rampUpStart, actualRamp); r <= 100; r++) {
+                    checkLock(); await config.peripherals.setCompressorRamp(r);
                     await asyncWait(rampPeriodMs);
                 }
-                checkLock();
-                await config.peripherals.setCompressorRelay(true);
+                checkLock(); await config.peripherals.setCompressorRelay(true);
                 await asyncWait(parallelRelaysMs);
-                checkLock();
-                await config.peripherals.setCompressorRamp(0);
+                checkLock(); await config.peripherals.setCompressorRamp(0);
             } else {
-                checkLock();
-                if (registers.compressorRelay.value) {
-                    await config.peripherals.setCompressorRamp(100);
+                if (actualRelay) {
+                    checkLock(); await config.peripherals.setCompressorRamp(100);
+                    actualRamp = 100;
                     await asyncWait(parallelRelaysMs);
-                    checkLock();
-                    await config.peripherals.setCompressorRelay(false);
+                    checkLock(); await config.peripherals.setCompressorRelay(false);
                 }
-                for (let r = Math.min(100, registers.compressorRamp.value); r >= rampDownStop; r--) {
-                    checkLock();
-                    await config.peripherals.setCompressorRamp(r);
+                for (let r = Math.min(100, actualRamp); r >= rampDownStop; r--) {
+                    checkLock(); await config.peripherals.setCompressorRamp(r);
                     await asyncWait(rampPeriodMs);
                 }
-                checkLock();
-                await config.peripherals.setCompressorRamp(0);
+                checkLock(); await config.peripherals.setCompressorRamp(0);
             }
 
         }
@@ -136,15 +140,15 @@ module.exports = async config => {
         },
 
         async setColdWaterPump(state) {
-            config.peripherals.setColdWaterPump(state);
+            await config.peripherals.setColdWaterPump(state);
         },
 
         async setHotWaterPump(state) {
-            config.peripherals.setColdWaterPump(state);
+            await config.peripherals.setColdWaterPump(state);
         },
 
         async eevRun(fullSteps, fast) {
-            config.peripherals.eevRun(fullSteps, fast);
-        },        
+            await config.peripherals.eevRun(fullSteps, fast);
+        },
     }
 }

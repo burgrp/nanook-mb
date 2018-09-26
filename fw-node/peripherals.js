@@ -92,11 +92,29 @@ module.exports = async config => {
 
     });
 
-    registers.push(createRegister("compressorRamp", "Compressor Ramp", undefined, "%"));
-    registers.push(createRegister("compressorRelay", "Compressor Relay", undefined, undefined));
-    registers.push(createRegister("eevPosition", "Expansion Valve", undefined, "steps"));
-    registers.push(createRegister("coldWaterPump", "Cold Side Circulation Pump", undefined, undefined));
-    registers.push(createRegister("hotWaterPump", "Hot Side Circulation Pump", undefined, undefined));
+    let compressorRamp = createRegister("compressorRamp", "Compressor Ramp", undefined, "%");
+    registers.push(compressorRamp);
+
+    let compressorRelay = createRegister("compressorRelay", "Compressor Relay", undefined, undefined);
+    registers.push(compressorRelay);
+
+    let eevPosition = createRegister("eevPosition", "Expansion Valve", undefined, "steps");
+    registers.push(eevPosition);
+
+    let coldWaterPump = createRegister("coldWaterPump", "Cold Side Circulation Pump", undefined, undefined);
+    registers.push(coldWaterPump);
+
+    let hotWaterPump = createRegister("hotWaterPump", "Hot Side Circulation Pump", undefined, undefined);
+    registers.push(hotWaterPump);
+
+    tickers.push(async () => {
+        let buffer = Buffer.from(await i2c.read(obpAddress, 1 + 4));
+        let outputs = buffer.readUInt8(0);
+        await compressorRelay.set((outputs & 1) != 0);
+        await coldWaterPump.set((outputs & 2) != 0);
+        await hotWaterPump.set((outputs & 4) != 0);
+        await eevPosition.set(buffer.readInt32LE(1));
+    });
 
     async function tick() {
         for (let ticker of tickers) {
@@ -119,15 +137,15 @@ module.exports = async config => {
 
     return {
         registers,
-        
+
         async setCompressorRelay(state) {
             console.log("Compressor Relay =>", state);
         },
-        
+
         async setCompressorRamp(ramp) {
             console.log("Compressor Ramp =>", ramp);
         },
-        
+
         async setColdWaterPump(state) {
             console.log("Cold Water Pump =>", state);
         },
@@ -135,18 +153,14 @@ module.exports = async config => {
         async setHotWaterPump(state) {
             console.log("Hot Water Pump =>", state);
         },
-        
+
         async eevRun(fullSteps, fast) {
-            console.info("EEV to run " + fullSteps + " steps" + (fast? " fast": ""));
-            let flags = 0;
-            if (fullSteps > 0) {
-                flags |= 1;
-            }
-            if (fast) {
-                flags |= 2;
-            }
-            fullSteps = Math.abs(fullSteps);
-            await i2c.write(obpAddress, [2, fullSteps & 0xFF, (fullSteps >> 8) & 0xFF, flags]);
+            console.info("EEV to run " + fullSteps + " steps" + (fast ? " fast" : ""));
+            let buffer = Buffer.alloc(1 + 2 + 1);
+            buffer.writeUInt8(2, 0);
+            buffer.writeInt16LE(fullSteps, 1);
+            buffer.writeUInt8(fast ? 1 : 0, 3);
+            await i2c.write(obpAddress, [...buffer]);
         }
     }
 }

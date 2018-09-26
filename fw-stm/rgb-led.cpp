@@ -1,6 +1,6 @@
 namespace rgbLed {
 
-struct Setting {
+struct __attribute__ ((packed)) Setting {
     unsigned char rampUpTime;
     unsigned char onTime;
     unsigned char rampDownTime;
@@ -22,16 +22,16 @@ class Driver {
     volatile target::tim_16_17::Peripheral* timer;
 
     Setting setting = { 
-        // .rampUpTime = 100,
-        // .onTime = 0,
-        // .rampDownTime = 10,
-        // .offTime = 10,
-        // .rgb = { 0, 255, 30 }
-        .rampUpTime = 0,
+        .rampUpTime = 100,
         .onTime = 0,
-        .rampDownTime = 0,
-        .offTime = 0,
-        .rgb = { 0, 0, 5 }
+        .rampDownTime = 10,
+        .offTime = 10,
+        .rgb = { 0, 255, 30 }
+        // .rampUpTime = 0,
+        // .onTime = 0,
+        // .rampDownTime = 0,
+        // .offTime = 0,
+        // .rgb = { 0, 0, 5 }
     };
 
 public:

@@ -10,7 +10,7 @@
 	"silicon": {
 		"sources": [
 			"rgb-led.cpp",
-			"e2v.cpp",
+			"eev.cpp",
 			"main.cpp"
 		],
 		"symbols": {
