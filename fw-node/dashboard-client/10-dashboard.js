@@ -18,28 +18,39 @@ wg.pages.home = {
             }, 5000);
         }
 
-        function setRegister(regName, value) {
-            wg.dashboard.setRegister(regName, value).catch(e => {
+        async function checkAction(action) {
+            try {
+                await action();
+            } catch (e) {
                 console.error(e);
                 showNotification(e);
-            });
+            }
         }
 
-        function stopStartButtons(register) {
+        function startStopButtons(action) {
             return [
-                BUTTON("start").text("Start").click(e => setRegister(register, true)),
-                BUTTON("stop").text("Stop").click(e => setRegister(register, false))
+                BUTTON("start").text("Start").click(e => checkAction(async () => await action(true))),
+                BUTTON("stop").text("Stop").click(e => checkAction(async () => await action(false)))
             ];
         }
 
+        function eevButton(text, change, fast) {
+                return BUTTON().text(text).click(e => checkAction(async () => await wg.dashboard.eevRun(change, fast)))
+        }
+
         let controls = {
-            controllerEnabled: stopStartButtons("controllerEnabled"),
-            compressorControl: stopStartButtons("compressorControl"),
-            coldWaterPump: stopStartButtons("coldWaterPump"),
-            hotWaterPump: stopStartButtons("hotWaterPump"),
-            eevPosition: [INPUT("slider", { type: "range", id: "eevPosition", min: 0, max: 100 }).change(async e => {
-                setRegister("eevPosition", $(e.target).val());
-            })]
+            controllerEnabled: startStopButtons(async s => await wg.dashboard.setRegister("controllerEnabled", s)),
+            compressorControl: startStopButtons(async s => await wg.dashboard.setRegister("compressorControl", s)),
+            coldWaterPump: startStopButtons(async s => await wg.dashboard.setColdWaterPump(s)),
+            hotWaterPump: startStopButtons(async s => await wg.dashboard.setHotWaterPump(s)),
+            eevPosition: [
+                eevButton("Open", -500, true),
+                eevButton("<<", -50, false),
+                eevButton("<", -10, false),
+                eevButton(">", 10, false),
+                eevButton(">>", 50, false),
+                eevButton("Close", 500, true)
+            ]
         }
 
         let systemErrors = DIV("system-errors");

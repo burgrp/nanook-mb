@@ -85,39 +85,41 @@ module.exports = async config => {
             if (compressorControl.value) {
                 for (let r = Math.max(rampUpStart, registers.compressorRamp.value); r <= 100; r++) {
                     checkLock();
-                    await registers.compressorRamp.set(r);
+                    await config.peripherals.setCompressorRamp(r);
                     await asyncWait(rampPeriodMs);
                 }
                 checkLock();
-                await registers.compressorRelay.set(true);
+                await config.peripherals.setCompressorRelay(true);
                 await asyncWait(parallelRelaysMs);
                 checkLock();
-                await registers.compressorRamp.set(0);
+                await config.peripherals.setCompressorRamp(0);
             } else {
                 checkLock();
                 if (registers.compressorRelay.value) {
-                    await registers.compressorRamp.set(100);
+                    await config.peripherals.setCompressorRamp(100);
                     await asyncWait(parallelRelaysMs);
                     checkLock();
-                    await registers.compressorRelay.set(false);
+                    await config.peripherals.setCompressorRelay(false);
                 }
                 for (let r = Math.min(100, registers.compressorRamp.value); r >= rampDownStop; r--) {
                     checkLock();
-                    await registers.compressorRamp.set(r);
+                    await config.peripherals.setCompressorRamp(r);
                     await asyncWait(rampPeriodMs);
                 }
                 checkLock();
-                await registers.compressorRamp.set(0);
+                await config.peripherals.setCompressorRamp(0);
             }
 
         }
-        ramp().catch(e => {
-            if (e === rampCancel) {
-                console.info(rampCancel);
-            } else {
-                registers.compressorControl.failed(e);
-            }
-        });
+        if (!registers.compressorControl.error) {
+            ramp().catch(e => {
+                if (e === rampCancel) {
+                    console.info(rampCancel);
+                } else {
+                    registers.compressorControl.failed(e);
+                }
+            });
+        }
     });
 
     return {
@@ -131,6 +133,18 @@ module.exports = async config => {
         },
 
         async start() {
-        }
+        },
+
+        async setColdWaterPump(state) {
+            config.peripherals.setColdWaterPump(state);
+        },
+
+        async setHotWaterPump(state) {
+            config.peripherals.setColdWaterPump(state);
+        },
+
+        async eevRun(fullSteps, fast) {
+            config.peripherals.eevRun(fullSteps, fast);
+        },        
     }
 }

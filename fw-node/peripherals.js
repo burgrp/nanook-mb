@@ -92,64 +92,11 @@ module.exports = async config => {
 
     });
 
-    function createActorRegister(key, name, value, unit, setHandler) {
-        let register = createRegister(key, name, value, unit);
-        let superSet = register.set;
-        register.set = async (value, error) => {
-            try {
-                if (!error) {
-                    console.info("->", key, value);
-                    await setHandler.call(register, value);
-                }
-                await superSet.call(register, value, error);
-            } catch (e) {
-                register.failed(e.message || e);
-            }
-        };
-        registers.push(register);
-    }
-
-    createActorRegister("rgbLed", "RGB LED", undefined, undefined, async value => {
-        await i2c.write(obpAddress, [1, ...value]);
-    });
-
-    createActorRegister("compressorRamp", "Compressor Ramp", 0, "%", async value => {
-        //await i2c.write(obpAddress, [1, ...value]);
-    });
-
-    createActorRegister("compressorRelay", "Compressor Relay", false, undefined, async value => {
-        //await i2c.write(obpAddress, [1, ...value]);
-    });
-
-
-    async function e2vRun(fullSteps, fast) {
-        console.info("E2V to run " + fullSteps + " steps");
-        let flags = 0;
-        if (fullSteps > 0) {
-            flags |= 1;
-        }
-        if (fast) {
-            flags |= 2;
-        }
-        fullSteps = Math.abs(fullSteps);
-        await i2c.write(obpAddress, [2, fullSteps & 0xFF, (fullSteps >> 8) & 0xFF, flags]);
-    }
-
-    let e2vPosition = 0;
-    createActorRegister("eevPosition", "Expansion Valve", 0, "%", async value => {
-        let fullSteps = (value - e2vPosition) * 450 / 100;
-        await e2vRun(fullSteps);
-        e2vPosition = value;        
-    });
-
-    createActorRegister("coldWaterPump", "Cold Side Circulation Pump", false, undefined, async value => {
-        //await i2c.write(obpAddress, [1, ...value]);
-    });
-
-    createActorRegister("hotWaterPump", "Hot Side Circulation Pump", false, undefined, async value => {
-        //await i2c.write(obpAddress, [1, ...value]);
-    });
-
+    registers.push(createRegister("compressorRamp", "Compressor Ramp", undefined, "%"));
+    registers.push(createRegister("compressorRelay", "Compressor Relay", undefined, undefined));
+    registers.push(createRegister("eevPosition", "Expansion Valve", undefined, "steps"));
+    registers.push(createRegister("coldWaterPump", "Cold Side Circulation Pump", undefined, undefined));
+    registers.push(createRegister("hotWaterPump", "Hot Side Circulation Pump", undefined, undefined));
 
     async function tick() {
         for (let ticker of tickers) {
@@ -171,6 +118,35 @@ module.exports = async config => {
     scheduleNextTick();
 
     return {
-        registers
+        registers,
+        
+        async setCompressorRelay(state) {
+            console.log("Compressor Relay =>", state);
+        },
+        
+        async setCompressorRamp(ramp) {
+            console.log("Compressor Ramp =>", ramp);
+        },
+        
+        async setColdWaterPump(state) {
+            console.log("Cold Water Pump =>", state);
+        },
+
+        async setHotWaterPump(state) {
+            console.log("Hot Water Pump =>", state);
+        },
+        
+        async eevRun(fullSteps, fast) {
+            console.info("EEV to run " + fullSteps + " steps" + (fast? " fast": ""));
+            let flags = 0;
+            if (fullSteps > 0) {
+                flags |= 1;
+            }
+            if (fast) {
+                flags |= 2;
+            }
+            fullSteps = Math.abs(fullSteps);
+            await i2c.write(obpAddress, [2, fullSteps & 0xFF, (fullSteps >> 8) & 0xFF, flags]);
+        }
     }
 }

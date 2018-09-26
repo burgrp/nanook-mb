@@ -12,13 +12,26 @@ module.exports = async config => {
                     return config.controller.registers;
                 },
 
+                async getSystemErrors() {
+                    return config.controller.systemErrors;
+                },
+
                 async setRegister(regName, value) {
                     config.controller.registers[regName].set(value);
                 },
 
-                async getSystemErrors() {
-                    return config.controller.systemErrors;
-                }
+                async setColdWaterPump(state) {
+                    config.controller.setColdWaterPump(state);
+                },
+
+                async setHotWaterPump(state) {
+                    config.controller.setColdWaterPump(state);
+                },
+
+                async eevRun(fullSteps, fast) {
+                    config.controller.eevRun(fullSteps, fast);
+                },
+
             }
         }
     }
