@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/paul/df/hw-GWHP/board/GWHP.sch)
-    (date "Fri 14 Sep 2018 10:04:18 PM CEST")
+    (date "Wed 26 Sep 2018 01:04:15 PM CEST")
     (tool "Eeschema 4.0.7-e2-6376~58~ubuntu16.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -210,7 +210,7 @@
       (sheetpath (names /) (tstamps /))
       (tstamp 5B7DAD43))
     (comp (ref C5)
-      (value 10M)
+      (value 10u)
       (footprint Capacitors_SMD:C_0805)
       (libsource (lib device) (part C))
       (sheetpath (names /) (tstamps /))
