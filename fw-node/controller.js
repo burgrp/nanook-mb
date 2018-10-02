@@ -144,7 +144,7 @@ module.exports = async config => {
         },
 
         async setHotWaterPump(state) {
-            await config.peripherals.setColdWaterPump(state);
+            await config.peripherals.setHotWaterPump(state);
         },
 
         async eevRun(fullSteps, fast) {

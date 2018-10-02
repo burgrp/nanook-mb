@@ -25,7 +25,7 @@ module.exports = async config => {
                 },
 
                 async setHotWaterPump(state) {
-                    await config.controller.setColdWaterPump(state);
+                    await config.controller.setHotWaterPump(state);
                 },
 
                 async eevRun(fullSteps, fast) {

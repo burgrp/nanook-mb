@@ -5,6 +5,7 @@ module.exports = async config => {
     let i2c = config.i2c;
 
     let obpAddress = config.obpAddress || 0x73;
+    let rampDacAddress = config.rampDacAddress || 0x60;
 
     let registers = [];
     let tickers = [];
@@ -108,12 +109,26 @@ module.exports = async config => {
     registers.push(hotWaterPump);
 
     tickers.push(async () => {
-        let buffer = Buffer.from(await i2c.read(obpAddress, 1 + 4));
-        let outputs = buffer.readUInt8(0);
-        await compressorRelay.set((outputs & 1) != 0);
-        await coldWaterPump.set((outputs & 2) != 0);
-        await hotWaterPump.set((outputs & 4) != 0);
-        await eevPosition.set(buffer.readInt32LE(1));
+        try {
+            let obpData = Buffer.from(await i2c.read(obpAddress, 1 + 4));
+            let outputs = obpData.readUInt8(0);
+            await compressorRelay.set((outputs & 1) != 0);
+            await coldWaterPump.set((outputs & 2) != 0);
+            await hotWaterPump.set((outputs & 4) != 0);
+            await eevPosition.set(obpData.readInt32LE(1));
+        } catch(e) {
+            await compressorRelay.failed(e);
+            await coldWaterPump.failed(e);
+            await hotWaterPump.failed(e);
+            await eevPosition.failed(e);
+        }
+
+        try {
+            let rampDacData = await i2c.read(rampDacAddress, 2);
+            await compressorRamp.set(rampDacData[1] * 100 / 255);
+        } catch(e) {
+            await compressorRamp.failed(e);
+        }
     });
 
     async function tick() {
@@ -140,18 +155,22 @@ module.exports = async config => {
 
         async setCompressorRelay(state) {
             console.log("Compressor Relay =>", state);
+            await i2c.write(obpAddress, [3, 0, state ? 1 : 0]);
         },
 
         async setCompressorRamp(ramp) {
             console.log("Compressor Ramp =>", ramp);
+            await i2c.write(rampDacAddress, [0, ramp * 255 / 100]);
         },
 
         async setColdWaterPump(state) {
             console.log("Cold Water Pump =>", state);
+            await i2c.write(obpAddress, [3, 1, state ? 1 : 0]);
         },
 
         async setHotWaterPump(state) {
             console.log("Hot Water Pump =>", state);
+            await i2c.write(obpAddress, [3, 2, state ? 1 : 0]);
         },
 
         async eevRun(fullSteps, fast) {
