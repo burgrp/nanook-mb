@@ -15,6 +15,6 @@ rm ./package/feeds/packages/node
 rm ./package/feeds/packages/node-*
 ./scripts/feeds install -a -p node
 
-ln -s ../.config
+ln -s ../config .config
 
 make -j4
