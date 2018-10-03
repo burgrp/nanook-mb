@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 git clone https://git.openwrt.org/openwrt/openwrt.git
 cd openwrt
 git checkout v18.06.1
@@ -15,3 +17,4 @@ rm ./package/feeds/packages/node-*
 
 ln -s ../.config
 
+make -j4

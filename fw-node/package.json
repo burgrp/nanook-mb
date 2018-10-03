@@ -1,7 +1,7 @@
 {
   "name": "@device.farm/gwhp",
   "version": "1.0.7",
-  "main": "test.js",
+  "main": "src/main.js",
   "license": "ISC",
   "dependencies": {
     "@device.farm/appglue": "1.0.10",
