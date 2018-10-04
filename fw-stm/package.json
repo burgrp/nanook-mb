@@ -4,12 +4,11 @@
 	"author": "pb@drake.cz",
 	"dependencies": {
 		"@device.farm/si-stm32-i2c": "1.0.5",
-		"@device.farm/si-stm32-timer": "1.0.5",
+		"@device.farm/si-stm32-iwdg": "1.0.1",
 		"@device.farm/si-stm32f0x0": "1.0.0"
 	},
 	"silicon": {
 		"sources": [
-			"iwdg.cpp",
 			"rgb-led.cpp",
 			"eev.cpp",
 			"output-pin.cpp",

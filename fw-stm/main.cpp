@@ -52,12 +52,6 @@ public:
 
 		iwdg.init();
 
-		// RGB LED
-		rgbLed.init(&target::GPIOB, 3, 1, 0, &target::TIM16);
-
-		// EEV
-		eev.init(&target::GPIOA, 3, 4, 5, 6, 7, &target::TIM17);
-
 		outputPins[0].init(&target::GPIOA, 0, 0); // compressor relay
 		outputPins[1].init(&target::GPIOA, 1, 0); // pump cold side
 		outputPins[2].init(&target::GPIOA, 2, 0); // pump hot side
@@ -67,6 +61,18 @@ public:
 		inputPins[2].init(&target::GPIOA, pwrOkPin, false, true); pwrOk = &inputPins[2]; // PWR OK		
 		inputPins[3].init((volatile target::gpio_a::Peripheral*)&target::GPIOF, 0, false, true); // LPS
 		inputPins[4].init((volatile target::gpio_a::Peripheral*)&target::GPIOF, 1, false, true); // HPS
+
+		if (!pwrOk->get()) {
+			iwdg.reboot();
+			for(;;);
+		}
+
+		// RGB LED
+		rgbLed.init(&target::GPIOB, 3, 1, 0, &target::TIM16);
+
+		// EEV
+		eev.init(&target::GPIOA, 3, 4, 5, 6, 7, &target::TIM17);
+
 
 		// I2C
 		target::GPIOA.AFRH.setAFRH(9, 4);
@@ -117,6 +123,31 @@ public:
 		}
 	}
 
+	void handlePwrOkInterrupt() {		
+		if (target::EXTI.PR.getPR(pwrOkPin)) {
+			target::EXTI.PR.setPR(pwrOkPin, 1);
+
+			if (!pwrOk->get()) {
+				// power down
+				
+				fastCloseEev();
+
+				rgbLed::Setting setting = { 
+					.rampUpTime = 0,
+					.onTime = 0,
+					.rampDownTime = 0,
+					.offTime = 0,
+					.rgb = { 0, 0, 0 }
+				};
+				rgbLed.set(&setting);
+
+			} else {
+				// power up
+				iwdg.reboot();
+			}
+		}
+	}
+
 };
 
 GWHP gwhp;
@@ -134,42 +165,7 @@ void interruptHandlerTIM17() {
 }
 
 void interruptHandlerEXTI4_15() {
-
-	if (target::EXTI.PR.getPR(pwrOkPin)) {
-		target::EXTI.PR.setPR(pwrOkPin, 1);
-
-		if (!gwhp.pwrOk->get()) {
-
-			// power down
-
-			rgbLed::Setting setting = { 
-				.rampUpTime = 0,
-				.onTime = 1,
-				.rampDownTime = 0,
-				.offTime = 5,
-				.rgb = { 255, 50, 0 }
-			};
-
-			gwhp.rgbLed.set(&setting);
-
-			gwhp.fastCloseEev();
-
-		} else {
-			// power up
-
-			rgbLed::Setting setting = { 
-				.rampUpTime = 0,
-				.onTime = 1,
-				.rampDownTime = 0,
-				.offTime = 5,
-				.rgb = { 0, 250, 0 }
-			};
-
-			gwhp.rgbLed.set(&setting);
-			
-
-		}
-	}
+	gwhp.handlePwrOkInterrupt();
 }
 
 void initApplication() {
