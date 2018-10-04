@@ -19,20 +19,9 @@ class Driver {
     int stepEnd = 0xFF;
     int step;
 
-    volatile target::tim_16_17::Peripheral* timer;
+    Setting setting;
 
-    Setting setting = { 
-        .rampUpTime = 100,
-        .onTime = 0,
-        .rampDownTime = 10,
-        .offTime = 10,
-        .rgb = { 0, 255, 30 }
-        // .rampUpTime = 0,
-        // .onTime = 0,
-        // .rampDownTime = 0,
-        // .offTime = 0,
-        // .rgb = { 0, 0, 5 }
-    };
+    volatile target::tim_16_17::Peripheral* timer;
 
 public:
     void init(
@@ -40,13 +29,15 @@ public:
         int pinR,
         int pinG,
         int pinB,
-        volatile target::tim_16_17::Peripheral* timer
+        volatile target::tim_16_17::Peripheral* timer,
+        Setting* setting
     ) {
         this->port = port;
         this->pins[0] = pinR;
         this->pins[1] = pinG;
         this->pins[2] = pinB;
         this->timer = timer;
+        this->setting = *setting;
 
         for (int c = 0; c < sizeof(pins); c++) {
             port->MODER.setMODER(pins[c], 1);

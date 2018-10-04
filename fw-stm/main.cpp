@@ -36,6 +36,23 @@ class GWHP: public i2c::hw::BufferedSlave {
 		int eevPosition;
 	} i2cTxBuffer;
 
+    rgbLed::Setting rgbSettings[2] = {{
+		// power down 
+        .rampUpTime = 50,
+        .onTime = 0,
+        .rampDownTime = 50,
+        .offTime = 100,
+        .rgb = { 0, 30, 255 }
+	},{ 
+		// power up
+        .rampUpTime = 100,
+        .onTime = 0,
+        .rampDownTime = 1,
+        .offTime = 10,
+        .rgb = { 0, 255, 30 }
+	}};
+
+
 public:
 
 	iwdg::Driver iwdg;
@@ -62,29 +79,25 @@ public:
 		inputPins[3].init((volatile target::gpio_a::Peripheral*)&target::GPIOF, 0, false, true); // LPS
 		inputPins[4].init((volatile target::gpio_a::Peripheral*)&target::GPIOF, 1, false, true); // HPS
 
-		// if (!pwrOk->get()) {
-		// 	iwdg.reboot();
-		// 	for(;;);
-		// }
-
-		// RGB LED
-		rgbLed.init(&target::GPIOB, 3, 1, 0, &target::TIM16);
-
 		// EEV
 		eev.init(&target::GPIOA, 3, 4, 5, 6, 7, &target::TIM17);
 
+		bool isPwrOk = pwrOk->get();
 
-		// I2C
-		target::GPIOA.AFRH.setAFRH(9, 4);
-		target::GPIOA.AFRH.setAFRH(10, 4);
-		target::GPIOA.MODER.setMODER(9, 2);
-		target::GPIOA.MODER.setMODER(10, 2);
-		//BufferedSlave::init(&target::I2C1, i2cAddress, (unsigned char*)&i2cRxBuffer, sizeof(i2cRxBuffer), (unsigned char*)&i2cTxBuffer, sizeof(i2cTxBuffer));
+		// RGB LED
+		rgbLed.init(&target::GPIOB, 3, 1, 0, &target::TIM16, &rgbSettings[isPwrOk]);
 
-		fastCloseEev();
-	}
+		if (isPwrOk) {
 
-	void fastCloseEev() {
+			// I2C
+			target::GPIOA.AFRH.setAFRH(9, 4);
+			target::GPIOA.AFRH.setAFRH(10, 4);
+			target::GPIOA.MODER.setMODER(9, 2);
+			target::GPIOA.MODER.setMODER(10, 2);
+			BufferedSlave::init(&target::I2C1, i2cAddress, (unsigned char*)&i2cRxBuffer, sizeof(i2cRxBuffer), (unsigned char*)&i2cTxBuffer, sizeof(i2cTxBuffer));
+
+		} 
+
 		eev.run(500, true);
 	}
 
@@ -125,25 +138,8 @@ public:
 
 	void handlePwrOkInterrupt() {		
 		if (target::EXTI.PR.getPR(pwrOkPin)) {
-			target::EXTI.PR.setPR(pwrOkPin, 1);
-
-			if (!pwrOk->get()) {
-				// power down
-				fastCloseEev();
-
-				rgbLed::Setting setting = { 
-					.rampUpTime = 5,
-					.onTime = 1,
-					.rampDownTime = 5,
-					.offTime = 100,
-					.rgb = { 255, 0, 0 }
-				};
-				rgbLed.set(&setting);
-
-			} else {
-				// power up
-				iwdg.reboot();
-			}
+			// reboot on both edges, no need to clear interrupt
+			iwdg.reboot();
 		}
 	}
 
