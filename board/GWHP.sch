@@ -159,15 +159,15 @@ F 3 "" H 2000 3950 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C C3
+L CP C3
 U 1 1 5B5D1389
 P 2000 3800
 F 0 "C3" H 2025 3900 50  0000 L CNN
-F 1 "10u" H 2025 3700 50  0000 L CNN
-F 2 "Capacitors_SMD:C_0805" H 2038 3650 50  0001 C CNN
+F 1 "1m" H 2025 3700 50  0000 L CNN
+F 2 "Capacitors_SMD:CP_Elec_8x10" H 2038 3650 50  0001 C CNN
 F 3 "" H 2000 3800 50  0001 C CNN
 	1    2000 3800
-	-1   0    0    1   
+	1    0    0    -1  
 $EndComp
 $Comp
 L Switching_Power_Supply U3
@@ -1117,15 +1117,15 @@ F 3 "" H 1950 7100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C C2
+L CP C2
 U 1 1 5B807E49
 P 1950 6950
 F 0 "C2" H 1975 7050 50  0000 L CNN
-F 1 "10u" H 1975 6850 50  0000 L CNN
-F 2 "Capacitors_SMD:C_0805" H 1988 6800 50  0001 C CNN
+F 1 "1m" H 1975 6850 50  0000 L CNN
+F 2 "Capacitors_SMD:CP_Elec_8x10" H 1988 6800 50  0001 C CNN
 F 3 "" H 1950 6950 50  0001 C CNN
 	1    1950 6950
-	-1   0    0    1   
+	1    0    0    -1  
 $EndComp
 Text Label 1250 6750 2    60   ~ 0
 5V_BACKUP

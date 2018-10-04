@@ -10,6 +10,8 @@ enum Command {
 const int outputPinsCount = 3;
 const int inputPinsCount = 5;
 
+const int pwrOkPin = 12;
+
 class GWHP: public i2c::hw::BufferedSlave {
 
 	struct __attribute__ ((packed)) {
@@ -36,13 +38,19 @@ class GWHP: public i2c::hw::BufferedSlave {
 
 public:
 
+	iwdg::Driver iwdg;
+
 	rgbLed::Driver rgbLed;
 	eev::Driver eev;
 
 	outputPin::Driver outputPins[outputPinsCount];
 	inputPin::Driver inputPins[inputPinsCount];
 
+	inputPin::Driver* pwrOk;
+
 	void init(int i2cAddress) {
+
+		iwdg.init();
 
 		// RGB LED
 		rgbLed.init(&target::GPIOB, 3, 1, 0, &target::TIM16);
@@ -56,7 +64,7 @@ public:
 
 		inputPins[0].init(&target::GPIOA, 8, true, false); // EEV NFAULT
 		inputPins[1].init(&target::GPIOA, 11, true, false); // I2C ALERT
-		inputPins[2].init(&target::GPIOA, 12, false, true); // PWR OK
+		inputPins[2].init(&target::GPIOA, pwrOkPin, false, true); pwrOk = &inputPins[2]; // PWR OK		
 		inputPins[3].init((volatile target::gpio_a::Peripheral*)&target::GPIOF, 0, false, true); // LPS
 		inputPins[4].init((volatile target::gpio_a::Peripheral*)&target::GPIOF, 1, false, true); // HPS
 
@@ -66,6 +74,12 @@ public:
 		target::GPIOA.MODER.setMODER(9, 2);
 		target::GPIOA.MODER.setMODER(10, 2);
 		BufferedSlave::init(&target::I2C1, i2cAddress, (unsigned char*)&i2cRxBuffer, sizeof(i2cRxBuffer), (unsigned char*)&i2cTxBuffer, sizeof(i2cTxBuffer));
+
+		fastCloseEev();
+	}
+
+	void fastCloseEev() {
+		eev.run(500, true);
 	}
 
 	virtual void onTxStart() {				                
@@ -119,6 +133,45 @@ void interruptHandlerTIM17() {
 	gwhp.eev.handleInterrupt();
 }
 
+void interruptHandlerEXTI4_15() {
+
+	if (target::EXTI.PR.getPR(pwrOkPin)) {
+		target::EXTI.PR.setPR(pwrOkPin, 1);
+
+		if (!gwhp.pwrOk->get()) {
+
+			// power down
+
+			rgbLed::Setting setting = { 
+				.rampUpTime = 0,
+				.onTime = 1,
+				.rampDownTime = 0,
+				.offTime = 5,
+				.rgb = { 255, 50, 0 }
+			};
+
+			gwhp.rgbLed.set(&setting);
+
+			gwhp.fastCloseEev();
+
+		} else {
+			// power up
+
+			rgbLed::Setting setting = { 
+				.rampUpTime = 0,
+				.onTime = 1,
+				.rampDownTime = 0,
+				.offTime = 5,
+				.rgb = { 0, 250, 0 }
+			};
+
+			gwhp.rgbLed.set(&setting);
+			
+
+		}
+	}
+}
+
 void initApplication() {
 
 	target::RCC.AHBENR.setIOPAEN(true);
@@ -131,6 +184,12 @@ void initApplication() {
 	target::NVIC.ISER.setSETENA(1 << target::interrupts::External::I2C1);
 	target::NVIC.ISER.setSETENA(1 << target::interrupts::External::TIM16);
 	target::NVIC.ISER.setSETENA(1 << target::interrupts::External::TIM17);
+	target::NVIC.ISER.setSETENA(1 << target::interrupts::External::EXTI4_15);
+
+	target::SYSCFG.EXTICR4.setEXTI(pwrOkPin, 0);
+	target::EXTI.IMR.setMR(pwrOkPin, 1);
+	target::EXTI.FTSR.setTR(pwrOkPin, 1);
+	target::EXTI.RTSR.setTR(pwrOkPin, 1);
 
 	gwhp.init(0x73);
 

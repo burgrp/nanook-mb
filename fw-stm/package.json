@@ -9,6 +9,7 @@
 	},
 	"silicon": {
 		"sources": [
+			"iwdg.cpp",
 			"rgb-led.cpp",
 			"eev.cpp",
 			"output-pin.cpp",
