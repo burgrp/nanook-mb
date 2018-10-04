@@ -1,23 +1,23 @@
 namespace eev {
 
-const unsigned char phases[8] = {
-    0b0001,
-    0b0101,
-    0b0100,
-    0b0110,
-    0b0010,
-    0b1010,
-    0b1000,
-    0b1001
-};
-
-
-// const unsigned char phases[4] = {
+// const unsigned char phases[8] = {
 //     0b0001,
+//     0b0101,
 //     0b0100,
+//     0b0110,
 //     0b0010,
-//     0b1000
+//     0b1010,
+//     0b1000,
+//     0b1001
 // };
+
+
+const unsigned char phases[4] = {
+    0b0001,
+    0b0100,
+    0b0010,
+    0b1000
+};
 
 class Driver {
 
@@ -66,11 +66,11 @@ public:
     void run(int fullSteps, bool fast) {
         timer->PSC.setPSC(fast? 1: 3); // 3=50Hz, 1=150Hz
         timer->ARR.setARR(53333);
-        stop = counter + fullSteps * 2;
+        stop = counter + fullSteps;// * 2;
     }
 
     int getPosition() {
-        return counter / 2;
+        return counter;// / 2;
     }
 
 

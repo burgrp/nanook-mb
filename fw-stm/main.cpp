@@ -62,10 +62,10 @@ public:
 		inputPins[3].init((volatile target::gpio_a::Peripheral*)&target::GPIOF, 0, false, true); // LPS
 		inputPins[4].init((volatile target::gpio_a::Peripheral*)&target::GPIOF, 1, false, true); // HPS
 
-		if (!pwrOk->get()) {
-			iwdg.reboot();
-			for(;;);
-		}
+		// if (!pwrOk->get()) {
+		// 	iwdg.reboot();
+		// 	for(;;);
+		// }
 
 		// RGB LED
 		rgbLed.init(&target::GPIOB, 3, 1, 0, &target::TIM16);
@@ -79,7 +79,7 @@ public:
 		target::GPIOA.AFRH.setAFRH(10, 4);
 		target::GPIOA.MODER.setMODER(9, 2);
 		target::GPIOA.MODER.setMODER(10, 2);
-		BufferedSlave::init(&target::I2C1, i2cAddress, (unsigned char*)&i2cRxBuffer, sizeof(i2cRxBuffer), (unsigned char*)&i2cTxBuffer, sizeof(i2cTxBuffer));
+		//BufferedSlave::init(&target::I2C1, i2cAddress, (unsigned char*)&i2cRxBuffer, sizeof(i2cRxBuffer), (unsigned char*)&i2cTxBuffer, sizeof(i2cTxBuffer));
 
 		fastCloseEev();
 	}
@@ -129,15 +129,14 @@ public:
 
 			if (!pwrOk->get()) {
 				// power down
-				
 				fastCloseEev();
 
 				rgbLed::Setting setting = { 
-					.rampUpTime = 0,
-					.onTime = 0,
-					.rampDownTime = 0,
-					.offTime = 0,
-					.rgb = { 0, 0, 0 }
+					.rampUpTime = 5,
+					.onTime = 1,
+					.rampDownTime = 5,
+					.offTime = 100,
+					.rgb = { 255, 0, 0 }
 				};
 				rgbLed.set(&setting);
 
