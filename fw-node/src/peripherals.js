@@ -108,25 +108,55 @@ module.exports = async config => {
     let hotWaterPump = createRegister("hotWaterPump", "Hot Side Circulation Pump", undefined, undefined);
     registers.push(hotWaterPump);
 
+    let eevFault = createRegister("eevNFault", "EEV Fault", undefined, undefined);
+    registers.push(eevFault);
+
+    let i2cAlert = createRegister("i2cAlert", "I2C Alert", undefined, undefined);
+    registers.push(i2cAlert);
+
+    let pwrOk = createRegister("pwrOk", "Power OK", undefined, undefined);
+    registers.push(pwrOk);
+
+    let psLow = createRegister("psLow", "Low Pressure Switch", undefined, undefined);
+    registers.push(psLow);
+
+    let psHigh = createRegister("psHigh", "High Pressure Switch", undefined, undefined);
+    registers.push(psHigh);
+
     tickers.push(async () => {
         try {
-            let obpData = Buffer.from(await i2c.read(obpAddress, 1 + 4));
+            let obpData = Buffer.from(await i2c.read(obpAddress, 1 + 1 + 4));
+
             let outputs = obpData.readUInt8(0);
             await compressorRelay.set((outputs & 1) != 0);
             await coldWaterPump.set((outputs & 2) != 0);
             await hotWaterPump.set((outputs & 4) != 0);
-            await eevPosition.set(obpData.readInt32LE(1));
-        } catch(e) {
+
+            let inputs = obpData.readUInt8(1);
+            await eevFault.set((inputs & 1) != 0);
+            await i2cAlert.set((inputs & 2) != 0);
+            await pwrOk.set((inputs & 4) != 0);
+            await psLow.set((inputs & 8) != 0);
+            await psHigh.set((inputs & 16) != 0);
+
+            await eevPosition.set(obpData.readInt32LE(2));
+
+        } catch (e) {
             await compressorRelay.failed(e);
             await coldWaterPump.failed(e);
             await hotWaterPump.failed(e);
+            await eevFault.failed(e);
+            await i2cAlert.failed(e);
+            await pwrOk.failed(e);
+            await psLow.failed(e);
+            await psHigh.failed(e);
             await eevPosition.failed(e);
         }
 
         try {
             let rampDacData = await i2c.read(rampDacAddress, 2);
             await compressorRamp.set(rampDacData[1] * 100 / 255);
-        } catch(e) {
+        } catch (e) {
             await compressorRamp.failed(e);
         }
     });

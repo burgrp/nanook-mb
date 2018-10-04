@@ -12,6 +12,7 @@
 			"rgb-led.cpp",
 			"eev.cpp",
 			"output-pin.cpp",
+			"input-pin.cpp",
 			"main.cpp"
 		],
 		"symbols": {

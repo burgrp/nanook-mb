@@ -8,6 +8,7 @@ enum Command {
 };
 
 const int outputPinsCount = 3;
+const int inputPinsCount = 5;
 
 class GWHP: public i2c::hw::BufferedSlave {
 
@@ -29,6 +30,7 @@ class GWHP: public i2c::hw::BufferedSlave {
 
 	struct __attribute__ ((packed)) {
 		unsigned char outputs;
+		unsigned char inputs;
 		int eevPosition;
 	} i2cTxBuffer;
 
@@ -38,6 +40,7 @@ public:
 	eev::Driver eev;
 
 	outputPin::Driver outputPins[outputPinsCount];
+	inputPin::Driver inputPins[inputPinsCount];
 
 	void init(int i2cAddress) {
 
@@ -51,6 +54,12 @@ public:
 		outputPins[1].init(&target::GPIOA, 1, 0); // pump cold side
 		outputPins[2].init(&target::GPIOA, 2, 0); // pump hot side
 
+		inputPins[0].init(&target::GPIOA, 8, true, false); // EEV NFAULT
+		inputPins[1].init(&target::GPIOA, 11, true, false); // I2C ALERT
+		inputPins[2].init(&target::GPIOA, 12, false, true); // PWR OK
+		inputPins[3].init((volatile target::gpio_a::Peripheral*)&target::GPIOF, 0, false, true); // LPS
+		inputPins[4].init((volatile target::gpio_a::Peripheral*)&target::GPIOF, 1, false, true); // HPS
+
 		// I2C
 		target::GPIOA.AFRH.setAFRH(9, 4);
 		target::GPIOA.AFRH.setAFRH(10, 4);
@@ -63,6 +72,10 @@ public:
 		i2cTxBuffer.outputs = 0;
 		for (int c = 0; c < outputPinsCount; c++) {
 			i2cTxBuffer.outputs |= outputPins[c].get() << c;
+		}
+		i2cTxBuffer.inputs = 0;
+		for (int c = 0; c < inputPinsCount; c++) {
+			i2cTxBuffer.inputs |= inputPins[c].get() << c;
 		}
 		i2cTxBuffer.eevPosition = eev.getPosition();
 	}
