@@ -57,9 +57,9 @@ module.exports = async config => {
         } else {
             console.info("CONTROLLER DISABLED");
             await registers.compressorControl.set(false);
-            await registers.coldWaterPump.set(false);
-            await registers.hotWaterPump.set(false);
-            await registers.eevPosition.set(0);
+            await config.peripherals.setColdWaterPump(false);
+            await config.peripherals.setHotWaterPump(false);
+            await config.peripherals.eevRun(500, true);
         }
     });
 

@@ -50,7 +50,8 @@
                     },
                     "transducerWaterPressure": {
                         "min": 0,
-                        "max": 12
+                        "max": 12,
+                        "calibration": 0.1
                     },
                     "transducerFrigoPressure": {
                         "min": -1,
@@ -59,13 +60,14 @@
                 },
                 "hot": {
                     "name": "Hot Side",
-                    "address": "0x72",
+                    "address": "0x71",
                     "transducerWaterFlow": {
                         "mlPerRev": 1
                     },
                     "transducerWaterPressure": {
                         "min": 0,
-                        "max": 12
+                        "max": 12,
+                        "calibration": 0.1
                     },
                     "transducerFrigoPressure": {
                         "min": 0,

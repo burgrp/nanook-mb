@@ -12,14 +12,17 @@ module.exports = config => {
             reopen();
         }
 
-        try {
-            return await action(i2c);
-        } catch (e) {
-            if (e.message === "LIBUSB_ERROR_NO_DEVICE") {
-                reopen();
+        let attempt = 1;
+        while(true) {
+            try {
                 return await action(i2c);
-            } else {
-                throw e;
+            } catch (e) {
+                if (attempt > 5) {
+                    throw e;
+                }
+                attempt++;
+                reopen();
+                console.info("I2C operation failed, retry " + attempt);
             }
         }
     }

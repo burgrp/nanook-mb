@@ -1,4 +1,5 @@
 const createRegister = require("./register.js");
+const asyncWait = require("./async-wait.js");
 
 module.exports = async config => {
 
@@ -44,12 +45,12 @@ module.exports = async config => {
 
         function convertPressure(raw, transducerParams, noiseBuffer) {
             let voltage = 5 * raw / 4096;
-            if (voltage < 0.4) {
+            if (voltage < 0.35) {
                 throw `Pressure transducer voltage ${voltage} too low`;
             }
             voltage = Math.round(voltage * 20) / 20;
 
-            let value = (voltage - 0.5) / 4 * (transducerParams.max - transducerParams.min) + transducerParams.min;
+            let value = (voltage - 0.5) / 4 * (transducerParams.max - transducerParams.min) + transducerParams.min + (transducerParams.calibration || 0);
             noiseBuffer.push(value);
 
             while (noiseBuffer.length > 5) {
