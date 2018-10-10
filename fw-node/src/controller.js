@@ -79,8 +79,8 @@ module.exports = async config => {
 
             let rampPeriodMs = config.rampPeriodMs || 100;
             let parallelRelaysMs = config.parallelRelaysMs || 1000;
-            let rampUpStart = config.rampUpStart || 20;
-            let rampDownStop = config.rampDownStop || 40;
+            let rampUpStart = config.rampUpStart || 60;
+            let rampDownStop = config.rampDownStop || 80;
 
             let actualRelay = registers.compressorRelay.value;
             if (actualRelay === undefined) {

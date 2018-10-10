@@ -5,7 +5,16 @@
             "module": "./peripherals.js",
             "tickMs": 500,
             "i2c": {
-                "module": "./i2c.js"
+                "module": "./i2c.js",
+                "bus": "-> $I2C_BUS",
+                "transport": {
+                    "usb": {
+                        "module": "@device.farm/usb-i2c-driver"
+                    },
+                    "mg": {
+                        "module": "./i2c-mg.js"
+                    }
+                }
             },
             "lm75a": {
                 "coldWaterIn": {

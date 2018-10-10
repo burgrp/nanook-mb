@@ -5,7 +5,8 @@
   "license": "ISC",
   "dependencies": {
     "@device.farm/appglue": "1.0.10",
-    "@device.farm/webglue": "1.0.2"
+    "@device.farm/webglue": "1.0.2",
+    "mongoose-os-rpc": "0.2.0"
   },
   "optionalDependencies": {
     "@device.farm/usb-i2c-driver": "1.0.1"

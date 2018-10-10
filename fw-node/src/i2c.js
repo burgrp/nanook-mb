@@ -1,15 +1,29 @@
+const asyncWait = require("./async-wait.js");
+
 module.exports = config => {
 
-    let i2c;
 
-    function reopen() {
-        i2c = require("@device.farm/usb-i2c-driver").open();
+
+    if (!config.bus) {
+        throw ("I2C bus not defined");
     }
+    console.info("I2C bus:", config.bus);
+
+    let transportName = config.bus.replace(/:.*/, "");
+
+    let transport = config.transport[transportName];
+    if (!transport) {
+        throw `Unknown transport "${transportName}"`;
+    }
+
+    let busName = config.bus.substring(transportName.length + 1);
+
+    let i2c;
 
     async function withInterface(action) {
 
         if (!i2c) {
-            reopen();
+            i2c = await transport.open(busName);
         }
 
         let attempt = 1;
@@ -21,8 +35,9 @@ module.exports = config => {
                     throw e;
                 }
                 attempt++;
-                reopen();
+                i2c = await transport.open(busName);
                 console.info("I2C operation failed, retry " + attempt);
+                await asyncWait(100);
             }
         }
     }
