@@ -9,7 +9,7 @@
                 "bus": "-> $I2C_BUS",
                 "transport": {
                     "usb": {
-                        "module": "@device.farm/usb-i2c-driver"
+                        "module": "./i2c-usb.js"
                     },
                     "mg": {
                         "module": "./i2c-mg.js"
