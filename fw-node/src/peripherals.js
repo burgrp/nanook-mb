@@ -5,7 +5,7 @@ module.exports = async config => {
 
     let i2c = config.i2c;
 
-    let obpAddress = config.obpAddress || 0x73;
+    let obpAddress = config.obpAddress || 0x74;
     let rampDacAddress = config.rampDacAddress || 0x60;
 
     let registers = [];

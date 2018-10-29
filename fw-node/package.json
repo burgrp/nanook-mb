@@ -6,7 +6,8 @@
   "dependencies": {
     "@device.farm/appglue": "1.0.10",
     "@device.farm/webglue": "1.0.2",
-    "mongoose-os-rpc": "0.2.0"
+    "mongoose-os-rpc": "0.2.0",
+    "promise-critical-section": "0.0.2"
   },
   "optionalDependencies": {
     "@device.farm/usb-i2c-driver": "1.0.1"

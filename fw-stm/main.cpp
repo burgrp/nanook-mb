@@ -182,6 +182,6 @@ void initApplication() {
 	target::EXTI.FTSR.setTR(pwrOkPin, 1);
 	target::EXTI.RTSR.setTR(pwrOkPin, 1);
 
-	gwhp.init(0x73);
+	gwhp.init(0x74);
 
 }

@@ -2,7 +2,7 @@
 
 set -e
 
-WIFI_SSID=416K
+WIFI_SSID=416P
 WIFI_PASSWORD=ferdamravenec
 HOST_NAME=hp
 

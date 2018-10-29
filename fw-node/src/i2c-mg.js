@@ -1,5 +1,7 @@
 const Rpc = require("mongoose-os-rpc").Rpc;
 const pro = require("util").promisify;
+const CriticalSection = require("promise-critical-section");
+const section = new CriticalSection();
 
 module.exports = config => {
     return {
@@ -18,18 +20,26 @@ module.exports = config => {
                     });
 
                 });
-            } 
+            }
 
             return {
-                async read(address, length) 
-                {
-                    let result = await call("I2C.Read", {addr: address, len: length});
-                    //console.info(result);
-                    return [...Buffer.from(result.data_hex, "hex")];
+                async read(address, length) {
+                    try {
+                        await section.enter();
+                        let result = await call("I2C.Read", { addr: address, len: length });
+                        return [...Buffer.from(result.data_hex, "hex")];
+                    } finally {
+                        await section.leave();
+                    }
                 },
 
                 async write(address, data) {
-                    await call("I2C.Write", {addr: address, data_hex: Buffer.from(data).toString("hex")});
+                    try {
+                        await section.enter();
+                        await call("I2C.Write", { addr: address, data_hex: Buffer.from(data).toString("hex") });
+                    } finally {
+                        await section.leave();
+                    }
                 }
             };
         }
