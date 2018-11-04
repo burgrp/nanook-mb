@@ -47,8 +47,12 @@ button.stop {
 
 .dashboard {
     flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+}
+
+.dashboard .schema-errors {
+    align-items: center;
 }
 
 .registers .register {

@@ -54,6 +54,7 @@ module.exports = async config => {
         await checkErrors();
         if (controllerEnabled.value) {
             console.info("Controller enabled");
+            
         } else {
             console.info("Controller disabled");
             await registers.compressorControl.set(false);

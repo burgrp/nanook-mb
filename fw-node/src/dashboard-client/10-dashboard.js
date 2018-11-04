@@ -119,22 +119,24 @@ wg.pages.home = {
                             ])
                         )
                 ),
-                systemErrors,
-                DIV("schema", span => {
-                    $.get("schema.svg", svg => {
-                        let svgStr = (new window.XMLSerializer()).serializeToString(svg);
-                        span.html(svgStr);
-                        span.find("tspan").each((i, tspan) => {
-                            tspan = $(tspan);
-                            let key = tspan.text();
-                            if (key.startsWith("$")) {
-                                key = key.substring(1);
-                                tspan.addClass("register-bound " + key);
-                            }
-                        });
-                        updateAllRegisters();
-                    });
-                })
+                DIV("schema-errors", [
+                        DIV("schema", span => {
+                            $.get("schema.svg", svg => {
+                                let svgStr = (new window.XMLSerializer()).serializeToString(svg);
+                                span.html(svgStr);
+                                span.find("tspan").each((i, tspan) => {
+                                    tspan = $(tspan);
+                                    let key = tspan.text();
+                                    if (key.startsWith("$")) {
+                                        key = key.substring(1);
+                                        tspan.addClass("register-bound " + key);
+                                    }
+                                });
+                                updateAllRegisters();
+                            });
+                        }),
+                        systemErrors
+                ])
             ])
                 .onRegisterChanged(cr => {
                     updateRegister(cr)
