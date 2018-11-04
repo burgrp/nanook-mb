@@ -53,9 +53,9 @@ module.exports = async config => {
     registers.controllerEnabled.watch(async controllerEnabled => {
         await checkErrors();
         if (controllerEnabled.value) {
-            console.info("CONTROLLER ENABLED");
+            console.info("Controller enabled");
         } else {
-            console.info("CONTROLLER DISABLED");
+            console.info("Controller disabled");
             await registers.compressorControl.set(false);
             await config.peripherals.setColdWaterPump(false);
             await config.peripherals.setHotWaterPump(false);
@@ -77,10 +77,13 @@ module.exports = async config => {
                 }
             }
 
-            let rampPeriodMs = config.rampPeriodMs || 100;
+            let rampTimeMs = config.rampTimeMs || 800;
+            let rampMinPerc = 60;            
+            let rampStepMs = config.rampStepMs || 100;
+
+            let rampStepPerc = (100 - rampMinPerc) / (rampTimeMs / rampStepMs);
+
             let parallelRelaysMs = config.parallelRelaysMs || 1000;
-            let rampUpStart = config.rampUpStart || 60;
-            let rampDownStop = config.rampDownStop || 80;
 
             let actualRelay = registers.compressorRelay.value;
             if (actualRelay === undefined) {
@@ -93,9 +96,9 @@ module.exports = async config => {
             }
 
             if (compressorControl.value) {
-                for (let r = Math.max(rampUpStart, actualRamp); r <= 100; r++) {
-                    checkLock(); await config.peripherals.setCompressorRamp(r);
-                    await asyncWait(rampPeriodMs);
+                for (let r = rampMinPerc; r <= 100; r += rampStepPerc ) {
+                    checkLock(); await config.peripherals.setCompressorRamp(Math.max(r, actualRamp));
+                    await asyncWait(rampStepMs);
                 }
                 checkLock(); await config.peripherals.setCompressorRelay(true);
                 await asyncWait(parallelRelaysMs);
@@ -107,9 +110,9 @@ module.exports = async config => {
                     await asyncWait(parallelRelaysMs);
                     checkLock(); await config.peripherals.setCompressorRelay(false);
                 }
-                for (let r = Math.min(100, actualRamp); r >= rampDownStop; r--) {
-                    checkLock(); await config.peripherals.setCompressorRamp(r);
-                    await asyncWait(rampPeriodMs);
+                for (let r = 100; r >= rampMinPerc; r -= rampStepPerc) {
+                    checkLock(); await config.peripherals.setCompressorRamp(Math.min(r, actualRamp));
+                    await asyncWait(rampStepMs);
                 }
                 checkLock(); await config.peripherals.setCompressorRamp(0);
             }
