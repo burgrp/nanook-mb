@@ -50,11 +50,47 @@ module.exports = async config => {
         }
     }
 
+    async function startControllerLoop() {
+
+        let startTime = new Date().getTime();
+
+        function checkRegisterMin(register, min, delay = 0) {
+            if (!(register.value >= min) && new Date().getTime() > startTime + delay * 1000) {
+                setSystemError(`${register.key}.min`, `${register.name} ${register.value}${register.unit || ""} is less than ${min}${register.unit || ""}`)
+            }
+        }
+
+        while (registers.controllerEnabled.value) {
+            console.info("Controller check");
+
+            checkRegisterMin(registers.coldWaterInTemp, 0, 30);
+            checkRegisterMin(registers.coldWaterOutTemp, -10, 30);
+            //checkRegisterMin(registers.coldWaterFlow, 1, 5);
+            //checkRegisterMin(registers.coldWaterPressure, 0.5);
+
+            checkRegisterMin(registers.hotWaterFlow, 1500, 5);
+            checkRegisterMin(registers.hotWaterPressure, 0.5);
+
+            if (!Object.values(systemErrors).length) {
+
+                if (!registers.hotWaterPump.value) {
+                    await config.peripherals.setHotWaterPump(true);
+                }
+
+            }
+
+            await asyncWait(1000);
+        }
+    }
+
     registers.controllerEnabled.watch(async controllerEnabled => {
         await checkErrors();
-        if (controllerEnabled.value) {
+        if (registers.controllerEnabled.value) {
             console.info("Controller enabled");
-            
+            setSystemError("controllerError");
+            startControllerLoop().catch(e => {
+                setSystemError("controllerError", e.message || e);
+            });
         } else {
             console.info("Controller disabled");
             await registers.compressorControl.set(false);
@@ -79,7 +115,7 @@ module.exports = async config => {
             }
 
             let rampTimeMs = config.rampTimeMs || 800;
-            let rampMinPerc = 60;            
+            let rampMinPerc = 60;
             let rampStepMs = config.rampStepMs || 100;
 
             let rampStepPerc = (100 - rampMinPerc) / (rampTimeMs / rampStepMs);
@@ -97,7 +133,7 @@ module.exports = async config => {
             }
 
             if (compressorControl.value) {
-                for (let r = rampMinPerc; r <= 100; r += rampStepPerc ) {
+                for (let r = rampMinPerc; r <= 100; r += rampStepPerc) {
                     checkLock(); await config.peripherals.setCompressorRamp(Math.max(r, actualRamp));
                     await asyncWait(rampStepMs);
                 }

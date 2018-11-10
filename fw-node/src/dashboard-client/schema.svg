@@ -27,13 +27,13 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.5261247"
-     inkscape:cx="471.43"
-     inkscape:cy="191.47318"
+     inkscape:cx="217.04969"
+     inkscape:cy="220.75556"
      inkscape:document-units="mm"
      inkscape:current-layer="layer2"
      showgrid="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1378"
+     inkscape:window-width="1600"
+     inkscape:window-height="838"
      inkscape:window-x="0"
      inkscape:window-y="33"
      inkscape:window-maximized="1"
@@ -343,7 +343,7 @@
          id="tspan867-6"
          x="14.792667"
          y="91.290352"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.60068655px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:0.52916664">$coldFrigoOutTemp</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.60068655px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:0.52916664">$coldWaterOutTemp</tspan></text>
     <text
        id="text4617"
        y="91.290352"
