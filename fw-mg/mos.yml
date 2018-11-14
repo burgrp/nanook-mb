@@ -11,22 +11,15 @@ sources:
 
 filesystem:
   - fs
+  - fs-build
 
 libs:
   - origin: ../../mg-df-core
-  - origin: https://github.com/mongoose-os-libs/http-server.git
   - origin: https://github.com/mongoose-os-libs/rpc-service-i2c.git
 
 config_schema:
   - ["i2c.enable", true]
   - ["i2c.debug", true]
   - ["i2c.freq", 10000]
-  - ["http.enable", true]
-  - ["http.document_root", ""]
-  - ["wifi.sta.ip", "10.1.0.13"]
-  - ["wifi.sta.netmask", "255.255.255.0"]
-  - ["wifi.sta.gw", "10.1.0.2"]
-  - ["wifi.sta.nameserver", "8.8.8.8"]
-
 
 manifest_version: 2017-09-29
