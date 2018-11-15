@@ -10,6 +10,16 @@ let regs = {};
 let tickers = [];
 let bus = I2C.get();
 
+function i2cRead(address, length) {
+    for (let t = 0; t < 5; t++) {
+        let data = I2C.read(bus, address, length, true);
+        if (data) {
+            return data;
+        }
+    }
+    Log.error("Error reading I2C address " + JSON.stringify(address));
+}
+
 function createLm75aRegister(name, address, title) {
     let reg = Register.add(regPrefix + name, RegisterVariable.create(undefined), {
         title: title,
@@ -21,7 +31,7 @@ function createLm75aRegister(name, address, title) {
     reg.tick = function () {
         //Log.info("LM75 update " + this.name);
         let temp;
-        let data = I2C.read(bus, this.address, 2, true);
+        let data = i2cRead(this.address, 2, true);
         if (data) {
             let intVal = ((data.at(0) << 8) | data.at(1)) >> 5;
             if (intVal & 0x0400) {
@@ -87,7 +97,7 @@ function createIasRegisters(side, address, sideTitle) {
         regFrigoPressure: regFrigoPressure,
 
         tick: function () {
-            let data = I2C.read(bus, this.address, 6, true);
+            let data = i2cRead(this.address, 6, true);
             if (data) {
                 this.regWaterFlow.setRaw(data.at(1) << 8 | data.at(0));
                 this.regWaterPressure.setRaw(data.at(3) << 8 | data.at(2));
@@ -119,8 +129,12 @@ createLm75aRegister("hotWaterOut", 0x4F, "Hot Side Water Outlet");
 createIasRegisters("cold", 0x70, "Cold");
 createIasRegisters("hot", 0x71, "Hot");
 
-Timer.set(2000, Timer.REPEAT, function () {
+function tick() {
+    Log.info("tick");
     for (let i in tickers) {
         tickers[i].tick();
     }
-}, null);
+    Timer.set(1000, 0, tick, null);
+}
+
+tick();
