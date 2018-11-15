@@ -1,0 +1,14 @@
+{
+    "ias": {
+        "cold": {
+            "waterPressure": {
+                "cal": 100
+            }
+        },
+        "hot": {
+            "waterPressure": {
+                "cal": 100
+            }
+        }
+    }
+}
