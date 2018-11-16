@@ -117,6 +117,81 @@ function createIasRegisters(side, address, sideTitle) {
     tickers.push(ticker);
 }
 
+function createObpRegisters(address) {
+
+    let compressorRelay = Register.add(regPrefix + "compressorRelay", RegisterVariable.create(undefined), { title: "Compressor Relay" });
+    let coldWaterPump = Register.add(regPrefix + "coldWaterPump", RegisterVariable.create(undefined), { title: "Cold Water Pump" });
+    let hotWaterPump = Register.add(regPrefix + "hotWaterPump", RegisterVariable.create(undefined), { title: "Hot Water Pump" });
+    let eevFault = Register.add(regPrefix + "eevFault", RegisterVariable.create(undefined), { title: "EEV Fault" });
+    let i2cAlert = Register.add(regPrefix + "i2cAlert", RegisterVariable.create(undefined), { title: "I2C Alert" });
+    let pwrOk = Register.add(regPrefix + "pwrOk", RegisterVariable.create(undefined), { title: "Power OK" });
+    let psLow = Register.add(regPrefix + "psLow", RegisterVariable.create(undefined), { title: "Low pressure Switch" });
+    let psHigh = Register.add(regPrefix + "psHigh", RegisterVariable.create(undefined), { title: "High pressure Switch" });
+    let eevPosition = Register.add(regPrefix + "eevPosition", RegisterVariable.create(undefined), { title: "EEV Position" });
+
+    let ticker = {
+        address: address,
+
+        compressorRelay: compressorRelay,
+        coldWaterPump: coldWaterPump,
+        hotWaterPump: hotWaterPump,
+        eevFault: eevFault,
+        i2cAlert: i2cAlert,
+        pwrOk: pwrOk,
+        psLow: psLow,
+        psHigh: psHigh,
+        eevPosition: eevPosition,
+
+        tick: function () {
+            let data = i2cRead(this.address, 1 + 1 + 4);
+
+            if (data) {
+
+                let outputs = data.at(0);
+                this.compressorRelay.setLocal((outputs & 1) !== 0);
+                this.coldWaterPump.setLocal((outputs & 2) !== 0);
+                this.hotWaterPump.setLocal((outputs & 4) !== 0);
+
+                let inputs = data.at(1);
+                this.eevFault.setLocal((inputs & 1) !== 0);
+                this.i2cAlert.setLocal((inputs & 2) !== 0);
+                this.pwrOk.setLocal((inputs & 4) !== 0);
+                this.psLow.setLocal((inputs & 8) !== 0);
+                this.psHigh.setLocal((inputs & 16) !== 0);
+
+                this.eevPosition.setLocal(
+                    data.at(5) << 24 |
+                    data.at(4) << 16 |
+                    data.at(3) << 8 |
+                    data.at(2)
+                );
+
+            } else {
+                compressorRelay.setLocal(undefined);
+                coldWaterPump.setLocal(undefined);
+                hotWaterPump.setLocal(undefined);
+                eevFault.setLocal(undefined);
+                i2cAlert.setLocal(undefined);
+                pwrOk.setLocal(undefined);
+                psLow.setLocal(undefined);
+                psHigh.setLocal(undefined);
+                eevPosition.setLocal(undefined);
+            }
+        }
+    };
+
+    tickers.push(ticker);
+}
+
+function createCommandRegister(name, cb) {
+    let reg = Register.add(regPrefix + name, RegisterVariable.create(undefined));
+    reg.origObserver = reg.observer;
+    reg.observer = function() {
+        cb(this);
+        this.origObserver.callback();
+    }
+}
+
 createLm75aRegister("coldWaterIn", 0x48, "Cold Side Water Inlet");
 createLm75aRegister("coldWaterOut", 0x49, "Cold Side Water Outlet");
 createLm75aRegister("coldFrigoIn", 0x4A, "Cold Side Refrigerant Inlet");
@@ -129,12 +204,22 @@ createLm75aRegister("hotWaterOut", 0x4F, "Hot Side Water Outlet");
 createIasRegisters("cold", 0x70, "Cold");
 createIasRegisters("hot", 0x71, "Hot");
 
+createObpRegisters(0x74);
+
+createCommandRegister("led", function(reg) {
+    Log.info("LED: " + JSON.stringify(reg.value));
+    value.setLocal(0);
+});
+
+let tickerIndex = 0;
+
 function tick() {
-    Log.info("tick");
-    for (let i in tickers) {
-        tickers[i].tick();
+    Log.info("tick " + JSON.stringify(tickerIndex));
+    tickers[tickerIndex++].tick();
+    if (tickerIndex === tickers.length) {
+        tickerIndex = 0;
     }
-    Timer.set(1000, 0, tick, null);
+    Timer.set(100, 0, tick, null);
 }
 
 tick();
