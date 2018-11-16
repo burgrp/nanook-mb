@@ -32,6 +32,10 @@ module.exports = async config => {
                     await config.controller.eevRun(fullSteps, fast);
                 },
 
+                async clearSystemError(key) {
+                    await config.controller.clearSystemError(key);
+                }
+
             }
         }
     }

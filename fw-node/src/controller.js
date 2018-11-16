@@ -19,6 +19,25 @@ module.exports = async config => {
     let systemErrors = {};
     let systemErrorsListeners = [];
 
+
+    function systemErrorsUpdated() {
+        systemErrorsListeners.forEach(listener => {
+            try {
+                listener(systemErrors);
+            } catch (e) {
+                console.error("Error in system error listener", e);
+            }
+        });
+        systemErrorsUpdated();
+    }
+
+    function clearSystemError(key) 
+    {
+        delete systemErrors[key];
+        systemErrorsUpdated();
+    }
+
+
     function setSystemError(key, message) {
         if (systemErrors[key] !== message) {
             if (message === undefined) {
@@ -26,13 +45,6 @@ module.exports = async config => {
             } else {
                 systemErrors[key] = message;
             }
-            systemErrorsListeners.forEach(listener => {
-                try {
-                    listener(systemErrors);
-                } catch (e) {
-                    console.error("Error in system error listener", e);
-                }
-            });
         }
     }
 
@@ -190,5 +202,9 @@ module.exports = async config => {
         async eevRun(fullSteps, fast) {
             await config.peripherals.eevRun(fullSteps, fast);
         },
+
+        async clearSystemError(key) {
+            clearSystemError(key);
+        }
     }
 }

@@ -126,8 +126,21 @@ module.exports = async config => {
 
     tickers.push(async () => {
         try {
-            let obpData = Buffer.from(await i2c.read(obpAddress, 1 + 1 + 4));
 
+            //TODO why it fails sometimes?
+            async function readAndCheckFF() {
+                for (let a = 0; a < 10; a++) {
+                    let data = await i2c.read(obpAddress, 1 + 1 + 4);
+                    if (data.some(b => b !== 0xFF)) {
+                        return data;
+                    }
+                    console.error("OBP reads as all 0xFF, retrying...");                    
+                }
+                throw "On board peripherals controller reads as all 0xFF"
+            }
+
+            let obpData = Buffer.from(await readAndCheckFF());
+            
             let outputs = obpData.readUInt8(0);
             await compressorRelay.set((outputs & 1) != 0);
             await coldWaterPump.set((outputs & 2) != 0);

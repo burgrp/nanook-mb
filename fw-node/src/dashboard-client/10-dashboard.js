@@ -56,7 +56,13 @@ wg.pages.home = {
         let systemErrors = DIV("system-errors");
 
         function updateSystemErrors(se) {
-            systemErrors.empty().append(Object.entries(se).map(([key, message]) => DIV("system-error").text(message)));
+            systemErrors.empty().append(Object.entries(se).map(([key, message]) => DIV("system-error").text(message).click(async e => {
+                    try {
+                        await wg.dashboard.clearSystemError(key);
+                    } catch(e) {
+                            showNotification(e);
+                    }
+            })));
         }
 
         function updateRegister(register) {

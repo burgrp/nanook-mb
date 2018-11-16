@@ -108,6 +108,10 @@ button.stop {
     margin-top: 1em;
 }
 
+.system-error {
+    cursor: pointer;
+}
+
 .notifications {
     position: fixed;
     right: 1em;
