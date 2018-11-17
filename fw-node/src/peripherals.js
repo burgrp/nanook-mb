@@ -16,7 +16,7 @@ module.exports = async config => {
         tickers.push(async () => {
             try {
                 let data = Buffer.from(await i2c.read(registerConfig.address, 2));
-                await register.set((0.125 * data.readUInt16BE()) / 32);
+                await register.set((0.125 * data.readInt16BE()) / 32);
             } catch (e) {
                 await register.failed(e.message || e);
             }

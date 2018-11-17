@@ -35,11 +35,11 @@
                 },
                 "hotFrigoIn": {
                     "name": "Hot Side Refrigerant Inlet",
-                    "address": "0x4C"
+                    "address": "0x4D"
                 },
                 "hotFrigoOut": {
                     "name": "Hot Side Refrigerant Outlet",
-                    "address": "0x4D"
+                    "address": "0x4C"
                 },
                 "hotWaterIn": {
                     "name": "Hot Side Water Inlet",

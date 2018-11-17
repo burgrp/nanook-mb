@@ -28,7 +28,6 @@ module.exports = async config => {
                 console.error("Error in system error listener", e);
             }
         });
-        systemErrorsUpdated();
     }
 
     function clearSystemError(key) 
@@ -45,6 +44,7 @@ module.exports = async config => {
             } else {
                 systemErrors[key] = message;
             }
+            systemErrorsUpdated();
         }
     }
 
