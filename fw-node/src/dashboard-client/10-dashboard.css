@@ -45,6 +45,10 @@ button.stop {
     background-color: #e16161;
 }
 
+button.locked {
+    display: none;
+}
+
 .dashboard {
     flex-wrap: wrap;
     align-items: flex-start;

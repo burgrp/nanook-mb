@@ -38,9 +38,11 @@ function createLm75aRegister(name, address, title) {
                 intVal = - (~intVal & 0x3FF);
             }
             temp = intVal * 0.125;
+            this.setLocal(Math.round(temp * 10) / 10);
+        } else {
+            this.setLocal(undefined);
         }
         //Log.info(this.name + ": " + JSON.stringify(temp));
-        this.setLocal(Math.round(temp * 10) / 10);
     }
 
     regs[name] = reg;
@@ -167,15 +169,15 @@ function createObpRegisters(address) {
                 );
 
             } else {
-                compressorRelay.setLocal(undefined);
-                coldWaterPump.setLocal(undefined);
-                hotWaterPump.setLocal(undefined);
-                eevFault.setLocal(undefined);
-                i2cAlert.setLocal(undefined);
-                pwrOk.setLocal(undefined);
-                psLow.setLocal(undefined);
-                psHigh.setLocal(undefined);
-                eevPosition.setLocal(undefined);
+                this.compressorRelay.setLocal(undefined);
+                this.coldWaterPump.setLocal(undefined);
+                this.hotWaterPump.setLocal(undefined);
+                this.eevFault.setLocal(undefined);
+                this.i2cAlert.setLocal(undefined);
+                this.pwrOk.setLocal(undefined);
+                this.psLow.setLocal(undefined);
+                this.psHigh.setLocal(undefined);
+                this.eevPosition.setLocal(undefined);
             }
         }
     };
@@ -183,12 +185,19 @@ function createObpRegisters(address) {
     tickers.push(ticker);
 }
 
-function createCommandRegister(name, cb) {
+function createCommandRegister(name, dlgCallback) {
     let reg = Register.add(regPrefix + name, RegisterVariable.create(undefined));
-    reg.origObserver = reg.observer;
-    reg.observer = function() {
-        cb(this);
-        this.origObserver.callback();
+    reg.observer = {
+        orig: reg.observer,
+        dlgCallback: dlgCallback,
+        reg: reg,
+        callback: function (value) {
+            if (this.dlgCallback && value !== undefined) {
+                this.dlgCallback(value);
+            }
+            this.orig.callback(value);
+            this.reg.setLocal(undefined);
+        }
     }
 }
 
@@ -206,19 +215,22 @@ createIasRegisters("hot", 0x71, "Hot");
 
 createObpRegisters(0x74);
 
-createCommandRegister("led", function(reg) {
-    Log.info("LED: " + JSON.stringify(reg.value));
-    value.setLocal(0);
+createCommandRegister("led", function (params) {
+    Log.info("LED: " + JSON.stringify(params));
 });
 
-let tickerIndex = 0;
+//let tickerIndex = 0;
 
 function tick() {
     Log.info("tick " + JSON.stringify(tickerIndex));
-    tickers[tickerIndex++].tick();
-    if (tickerIndex === tickers.length) {
-        tickerIndex = 0;
+    for (let t in tickers) {
+        tickers[t].tick();
     }
+    // Log.info("tick " + JSON.stringify(tickerIndex));
+    // tickers[tickerIndex++].tick();
+    // if (tickerIndex === tickers.length) {
+    //     tickerIndex = 0;
+    // }
     Timer.set(100, 0, tick, null);
 }
 

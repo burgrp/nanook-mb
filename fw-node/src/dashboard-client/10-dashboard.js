@@ -27,10 +27,17 @@ wg.pages.home = {
             }
         }
 
-        function startStopButtons(action) {
+        function startStopButtons(action, lock) {
+                let start = BUTTON("start" + (lock? " locked": "")).text("Start").click(e => checkAction(async () => await action(true)));
+                let stop = BUTTON("stop" + (lock? " locked": "")).text("Stop").click(e => checkAction(async () => await action(false)));
             return [
-                BUTTON("start").text("Start").click(e => checkAction(async () => await action(true))),
-                BUTTON("stop").text("Stop").click(e => checkAction(async () => await action(false)))
+                lock? BUTTON("unlock").text("Unlock").click(e => {
+                        $(start).toggleClass("locked", false);
+                        $(stop).toggleClass("locked", false);
+                        $(e.target).remove();
+                }): undefined,
+                start, 
+                stop
             ];
         }
 
@@ -40,7 +47,7 @@ wg.pages.home = {
 
         let controls = {
             controllerEnabled: startStopButtons(async s => await wg.dashboard.setRegister("controllerEnabled", s)),
-            compressorControl: startStopButtons(async s => await wg.dashboard.setRegister("compressorControl", s)),
+            compressorControl: startStopButtons(async s => await wg.dashboard.setRegister("compressorControl", s), true),
             coldWaterPump: startStopButtons(async s => await wg.dashboard.setColdWaterPump(s)),
             hotWaterPump: startStopButtons(async s => await wg.dashboard.setHotWaterPump(s)),
             eevPosition: [

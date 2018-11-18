@@ -30,8 +30,7 @@ module.exports = async config => {
         });
     }
 
-    function clearSystemError(key) 
-    {
+    function clearSystemError(key) {
         delete systemErrors[key];
         systemErrorsUpdated();
     }
@@ -64,33 +63,47 @@ module.exports = async config => {
 
     async function startControllerLoop() {
 
-        let startTime = new Date().getTime();
+        function controllerError(key, message) {
+            throw { key, message };
+        }
 
-        function checkRegisterMin(register, min, delay = 0) {
-            if (!(register.value >= min) && new Date().getTime() > startTime + delay * 1000) {
-                setSystemError(`${register.key}.min`, `${register.name} ${register.value}${register.unit || ""} is less than ${min}${register.unit || ""}`)
+        function checkRegisterMin(register, min) {
+            if (register.value < min) {
+                controllerError(`${register.key}.min`, `${register.name} ${register.value}${register.unit || ""} lower than ${min}${register.unit || ""}`);
             }
         }
 
+        function checkRegisterMax(register, max) {
+            if (register.value > max) {
+                controllerError(`${register.key}.max`, `${register.name} ${register.value}${register.unit || ""} higher than ${max}${register.unit || ""}`);
+            }
+        }
+
+        await config.peripherals.setColdWaterPump(true);
+        await config.peripherals.setHotWaterPump(true);
+        await config.peripherals.eevRun(500, true);
+        await asyncWait(10000);
+        await config.peripherals.eevRun(-400, true);
+        await asyncWait(4000);
+
+        function periodicChecks() {
+            checkRegisterMin(registers.coldWaterInTemp, 0);
+            checkRegisterMin(registers.coldWaterOutTemp, -10);
+            checkRegisterMin(registers.coldWaterFlow, 300);
+            checkRegisterMin(registers.coldWaterPressure, 0.4);
+            checkRegisterMin(registers.hotWaterFlow, 400);
+            checkRegisterMin(registers.hotWaterPressure, 0.4);
+            checkRegisterMax(registers.hotFrigoPressure, 23);
+        }
+
+        // one pass through periodic checks before compressor start
+        periodicChecks();
+
+        await registers.compressorControl.set(true);
+
         while (registers.controllerEnabled.value) {
             console.info("Controller check");
-
-            checkRegisterMin(registers.coldWaterInTemp, 0, 30);
-            checkRegisterMin(registers.coldWaterOutTemp, -10, 30);
-            //checkRegisterMin(registers.coldWaterFlow, 1, 5);
-            //checkRegisterMin(registers.coldWaterPressure, 0.5);
-
-            checkRegisterMin(registers.hotWaterFlow, 1500, 5);
-            checkRegisterMin(registers.hotWaterPressure, 0.5);
-
-            if (!Object.values(systemErrors).length) {
-
-                if (!registers.hotWaterPump.value) {
-                    await config.peripherals.setHotWaterPump(true);
-                }
-
-            }
-
+            periodicChecks();
             await asyncWait(1000);
         }
     }
@@ -99,9 +112,8 @@ module.exports = async config => {
         await checkErrors();
         if (registers.controllerEnabled.value) {
             console.info("Controller enabled");
-            setSystemError("controllerError");
             startControllerLoop().catch(e => {
-                setSystemError("controllerError", e.message || e);
+                setSystemError(e.key || "controllerError", e.message || e);
             });
         } else {
             console.info("Controller disabled");
@@ -132,8 +144,6 @@ module.exports = async config => {
 
             let rampStepPerc = (100 - rampMinPerc) / (rampTimeMs / rampStepMs);
 
-            let parallelRelaysMs = config.parallelRelaysMs || 1000;
-
             let actualRelay = registers.compressorRelay.value;
             if (actualRelay === undefined) {
                 throw "Unknow state of compressor relay";
@@ -150,13 +160,13 @@ module.exports = async config => {
                     await asyncWait(rampStepMs);
                 }
                 checkLock(); await config.peripherals.setCompressorRelay(true);
-                await asyncWait(parallelRelaysMs);
+                await asyncWait(config.parallelRelaysMsOn || 10000);
                 checkLock(); await config.peripherals.setCompressorRamp(0);
             } else {
                 if (actualRelay) {
                     checkLock(); await config.peripherals.setCompressorRamp(100);
                     actualRamp = 100;
-                    await asyncWait(parallelRelaysMs);
+                    await asyncWait(config.parallelRelaysMsOff || 1000);
                     checkLock(); await config.peripherals.setCompressorRelay(false);
                 }
                 for (let r = 100; r >= rampMinPerc; r -= rampStepPerc) {

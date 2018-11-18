@@ -1,7 +1,7 @@
 author: DEVICE-FARM
 description: WiFi I2C interface
 version: 1.0
-arch: esp8266
+arch: esp32
 
 tags:
   - c
