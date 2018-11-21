@@ -84,15 +84,15 @@ module.exports = async config => {
         await config.peripherals.eevRun(500, true);
         await asyncWait(10000);
         await config.peripherals.eevRun(-400, true);
-        await asyncWait(4000);
+        await asyncWait(2000);
 
         function periodicChecks() {
             checkRegisterMin(registers.coldWaterInTemp, 0);
             checkRegisterMin(registers.coldWaterOutTemp, -10);
-            checkRegisterMin(registers.coldWaterFlow, 300);
-            checkRegisterMin(registers.coldWaterPressure, 0.4);
-            checkRegisterMin(registers.hotWaterFlow, 400);
-            checkRegisterMin(registers.hotWaterPressure, 0.4);
+            checkRegisterMin(registers.coldWaterFlow, 100);
+            checkRegisterMin(registers.coldWaterPressure, 0.2);
+            checkRegisterMin(registers.hotWaterFlow, 300);
+            checkRegisterMin(registers.hotWaterPressure, 0.3);
             checkRegisterMax(registers.hotFrigoPressure, 23);
         }
 

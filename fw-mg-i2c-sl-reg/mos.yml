@@ -1,0 +1,23 @@
+author: DEVICE-FARM
+description: WiFi I2C slave register interface
+version: 1.0
+arch: esp8266
+
+tags:
+  - c
+
+sources:
+  - src
+
+filesystem:
+  - fs
+  - fs-build
+
+libs:
+  - origin: https://github.com/mongoose-os-libs/wifi
+  - origin: https://github.com/mongoose-os-libs/mqtt
+
+config_schema:
+
+
+manifest_version: 2017-09-29
