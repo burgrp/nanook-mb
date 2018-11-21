@@ -2,6 +2,7 @@
 #include "mgos_vfs.h"
 #include "frozen.h"
 #include "mgos_mqtt.h"
+#include "mgos_timers.h"
 
 #define UNUSED(x) (void)(x)
 
@@ -22,7 +23,7 @@ bool readRegMap()
 
   const char *fileName = "/regmap.json";
 
-  char *jsonStr = json_fread(fileName); // do not free, registers point inside
+  char *jsonStr = json_fread(fileName); 
   if (!jsonStr)
   {
     LOG(LL_ERROR, ("Error reading file %s", fileName));
@@ -71,7 +72,19 @@ bool readRegMap()
     }
   }
 
+  free(jsonStr);
   return true;
+}
+
+void advertise() {
+  for (int i = 0; i < registerCount; i++)
+  {
+    Register *reg = &registers[i];
+    char topic[200];
+    snprintf(topic, sizeof(topic), "register/%s/advertise", reg->name);
+
+    mgos_mqtt_pub(topic, reg->meta, strlen(reg->meta), 1, false);
+  }
 }
 
 void mqttAdvertiseHandler(struct mg_connection *nc, const char *topic, int topic_len, const char *msg, int msg_len, void *ud)
@@ -83,14 +96,7 @@ void mqttAdvertiseHandler(struct mg_connection *nc, const char *topic, int topic
   UNUSED(msg_len);
   UNUSED(ud);
 
-  for (int i = 0; i < registerCount; i++)
-  {
-    Register *reg = &registers[i];
-    char topic[200];
-    snprintf(topic, sizeof(topic), "register/%s/advertise", reg->name);
-
-    mgos_mqtt_pub(topic, reg->meta, strlen(reg->meta), 1, false);
-  }
+  advertise();
 }
 
 void publishValue(Register *reg)
@@ -161,6 +167,11 @@ bool mqttSubscribe()
   return true;
 }
 
+void advertiseTimerHandler(void *arg) {
+  UNUSED(arg);
+  advertise();
+}
+
 enum mgos_app_init_result mgos_app_init(void)
 {
   LOG(LL_INFO, ("--------------------------------------------"));
@@ -174,6 +185,8 @@ enum mgos_app_init_result mgos_app_init(void)
   {
     return MGOS_APP_INIT_ERROR;
   }
+
+  mgos_set_timer(10000, MGOS_TIMER_REPEAT, advertiseTimerHandler, NULL);
 
   LOG(LL_INFO, ("--------------------------------------------"));
 
