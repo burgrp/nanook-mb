@@ -18,6 +18,8 @@ libs:
   - origin: https://github.com/mongoose-os-libs/mqtt
 
 config_schema:
-
+  - ["i2c_slave", "o", { title: "I2C Slave" }]
+  - ["i2c_slave.sda", "i", 12, { title: "SDA pin" }]
+  - ["i2c_slave.scl", "i", 14, { title: "SCL pin" }]
 
 manifest_version: 2017-09-29

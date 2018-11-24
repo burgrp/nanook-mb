@@ -3,6 +3,7 @@
 #include "frozen.h"
 #include "mgos_mqtt.h"
 #include "mgos_timers.h"
+#include "mgos_gpio.h"
 
 #define UNUSED(x) (void)(x)
 
@@ -23,7 +24,7 @@ bool readRegMap()
 
   const char *fileName = "/regmap.json";
 
-  char *jsonStr = json_fread(fileName); 
+  char *jsonStr = json_fread(fileName);
   if (!jsonStr)
   {
     LOG(LL_ERROR, ("Error reading file %s", fileName));
@@ -76,7 +77,8 @@ bool readRegMap()
   return true;
 }
 
-void advertise() {
+void advertise()
+{
   for (int i = 0; i < registerCount; i++)
   {
     Register *reg = &registers[i];
@@ -167,9 +169,128 @@ bool mqttSubscribe()
   return true;
 }
 
-void advertiseTimerHandler(void *arg) {
+void advertiseTimerHandler(void *arg)
+{
   UNUSED(arg);
   advertise();
+}
+
+int bitCounter;
+int byteCounter;
+char rxByte;
+bool rxMode;
+bool enabled;
+
+void i2cDebug(void *arg)
+{
+  UNUSED(arg);
+  LOG(LL_INFO, ("I2C cnt: %d %d, %d, %x, %d", bitCounter, byteCounter, rxMode, rxByte, enabled));
+}
+
+//bool sda = true;
+//bool scl = true;
+
+int sdaPin;
+int sclPin;
+
+
+char rxBuffer[5];
+char txBuffer[5];
+
+// typedef enum {
+//   IDLE,
+//   RX_ADDR,
+//   RX_DATA,
+//   TX_DATA,
+//   TX_ACK,
+//   RX_ACK
+// } I2cState;
+
+// I2cState state;
+
+void sdaIntHandler()
+{
+  int sda = mgos_gpio_read(sdaPin);
+  int scl = mgos_gpio_read(sclPin);
+
+  if (!sda && scl)
+  {
+    // start condition
+    bitCounter = -1;
+    byteCounter = -1;
+    enabled = true;
+  }
+}
+
+void sclIntHandler()
+{
+  int sda = mgos_gpio_read(sdaPin);
+  int scl = mgos_gpio_read(sclPin);
+
+  if (enabled)
+  {
+
+    if (scl)
+    {
+
+      // on rising edge
+
+      if (bitCounter < 8)
+      {
+        if (bitCounter == 0)
+        {
+          rxByte = 0;
+        }
+
+        rxByte = (rxByte << 1) | sda;
+
+        if (bitCounter == 7)
+        {
+         // address = rxByte >> 1;
+          //enabled = address == 0x75;
+          rxMode = true;
+        }
+      }
+    }
+    else
+    {
+      // on falling edge
+
+      bitCounter++;
+
+      mgos_gpio_set_mode(sdaPin,
+                         (bitCounter == 8 && (rxMode || byteCounter == -1))
+                             ? MGOS_GPIO_MODE_OUTPUT
+                             : MGOS_GPIO_MODE_INPUT);
+
+      if (bitCounter == 9)
+      {
+        bitCounter = 0;
+      }
+    }
+  }
+}
+
+bool initI2C()
+{
+  sdaPin = mgos_config_get_i2c_slave_sda(&mgos_sys_config);
+  sclPin = mgos_config_get_i2c_slave_scl(&mgos_sys_config);
+
+  mgos_gpio_set_pull(sdaPin, MGOS_GPIO_PULL_UP);
+  mgos_gpio_set_pull(sclPin, MGOS_GPIO_PULL_UP);
+
+  mgos_gpio_set_mode(sdaPin, MGOS_GPIO_MODE_INPUT);
+  mgos_gpio_set_mode(sclPin, MGOS_GPIO_MODE_INPUT);
+
+  mgos_gpio_write(sdaPin, 0);
+  mgos_gpio_write(sclPin, 0);
+
+  mgos_gpio_set_int_handler_isr(sdaPin, MGOS_GPIO_INT_EDGE_ANY, sdaIntHandler, NULL);
+  mgos_gpio_enable_int(sdaPin);
+
+  mgos_gpio_set_int_handler_isr(sclPin, MGOS_GPIO_INT_EDGE_ANY, sclIntHandler, NULL);
+  mgos_gpio_enable_int(sclPin);
+  return true;
 }
 
 enum mgos_app_init_result mgos_app_init(void)
@@ -181,12 +302,19 @@ enum mgos_app_init_result mgos_app_init(void)
     return MGOS_APP_INIT_ERROR;
   }
 
+  if (!initI2C())
+  {
+    return MGOS_APP_INIT_ERROR;
+  }
+
   if (!mqttSubscribe())
   {
     return MGOS_APP_INIT_ERROR;
   }
 
   mgos_set_timer(10000, MGOS_TIMER_REPEAT, advertiseTimerHandler, NULL);
+
+  mgos_set_timer(1000, MGOS_TIMER_REPEAT, i2cDebug, NULL);
 
   LOG(LL_INFO, ("--------------------------------------------"));
 
