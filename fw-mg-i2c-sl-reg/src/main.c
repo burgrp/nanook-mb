@@ -179,96 +179,86 @@ int bitCounter;
 int byteCounter;
 char rxByte;
 bool rxMode;
-bool enabled;
 
 void i2cDebug(void *arg)
 {
   UNUSED(arg);
-  LOG(LL_INFO, ("I2C cnt: %d %d, %d, %x, %d", bitCounter, byteCounter, rxMode, rxByte, enabled));
+  LOG(LL_INFO, ("I2C cnt: %d %d, %d, %x", bitCounter, byteCounter, rxMode, rxByte));
 }
-
-//bool sda = true;
-//bool scl = true;
 
 int sdaPin;
 int sclPin;
 
-
 char rxBuffer[5];
 char txBuffer[5];
 
-// typedef enum {
-//   IDLE,
-//   RX_ADDR,
-//   RX_DATA,
-//   TX_DATA,
-//   TX_ACK,
-//   RX_ACK
-// } I2cState;
+int sda = 1;
+int scl = 1;
 
-// I2cState state;
-
-void sdaIntHandler()
+void sdaPosIntHandler()
 {
-  int sda = mgos_gpio_read(sdaPin);
-  int scl = mgos_gpio_read(sclPin);
+  sda = 1;
 
-  if (!sda && scl)
+  if (scl)
+  {
+    // stop condition
+  }
+}
+
+void sdaNegIntHandler()
+{
+  sda = 0;
+
+  if (scl)
   {
     // start condition
     bitCounter = -1;
     byteCounter = -1;
-    enabled = true;
   }
 }
 
-void sclIntHandler()
+void sclPosIntHandler()
 {
-  int sda = mgos_gpio_read(sdaPin);
-  int scl = mgos_gpio_read(sclPin);
+  scl = 1;
 
-  if (enabled)
+  //bool pullSda = false;
+
+  if (bitCounter == 8)
   {
-
-    if (scl)
+    //pullSda = true;
+  }
+  else
+  {
+    if (bitCounter == 0)
     {
-
-      // on rising edge
-
-      if (bitCounter < 8)
-      {
-        if (bitCounter == 0)
-        {
-          rxByte = 0;
-        }
-
-        rxByte = (rxByte << 1) | sda;
-
-        if (bitCounter == 7)
-        {
-         // address = rxByte >> 1;
-          //enabled = address == 0x75;
-          rxMode = true;
-        }
-      }
+      rxByte = 0;
     }
-    else
+
+    rxByte = (rxByte << 1) | sda;
+
+    if (bitCounter == 7)
     {
-      // on falling edge
-
-      bitCounter++;
-
-      mgos_gpio_set_mode(sdaPin,
-                         (bitCounter == 8 && (rxMode || byteCounter == -1))
-                             ? MGOS_GPIO_MODE_OUTPUT
-                             : MGOS_GPIO_MODE_INPUT);
-
-      if (bitCounter == 9)
-      {
-        bitCounter = 0;
-      }
+      // address = rxByte >> 1;
+      //enabled = address == 0x75;
+      rxMode = true;
     }
   }
+
+  mgos_gpio_set_mode(sdaPin, bitCounter > 5 ? MGOS_GPIO_MODE_OUTPUT : MGOS_GPIO_MODE_INPUT);  
+  mgos_gpio_write(sdaPin, 0);
+}
+
+void sclNegIntHandler()
+{
+  scl = 0;
+
+  bitCounter++;
+  if (bitCounter == 9)
+  {
+    bitCounter = 0;
+  }
+
+  mgos_gpio_set_mode(sdaPin, MGOS_GPIO_MODE_INPUT);
 }
 
 bool initI2C()
@@ -285,10 +275,12 @@ bool initI2C()
   mgos_gpio_write(sdaPin, 0);
   mgos_gpio_write(sclPin, 0);
 
-  mgos_gpio_set_int_handler_isr(sdaPin, MGOS_GPIO_INT_EDGE_ANY, sdaIntHandler, NULL);
+  mgos_gpio_set_int_handler_isr(sdaPin, MGOS_GPIO_INT_EDGE_POS, sdaPosIntHandler, NULL);
+  mgos_gpio_set_int_handler_isr(sdaPin, MGOS_GPIO_INT_EDGE_NEG, sdaNegIntHandler, NULL);
   mgos_gpio_enable_int(sdaPin);
 
-  mgos_gpio_set_int_handler_isr(sclPin, MGOS_GPIO_INT_EDGE_ANY, sclIntHandler, NULL);
+  mgos_gpio_set_int_handler_isr(sclPin, MGOS_GPIO_INT_EDGE_POS, sclPosIntHandler, NULL);
+  mgos_gpio_set_int_handler_isr(sclPin, MGOS_GPIO_INT_EDGE_NEG, sclNegIntHandler, NULL);
   mgos_gpio_enable_int(sclPin);
   return true;
 }
