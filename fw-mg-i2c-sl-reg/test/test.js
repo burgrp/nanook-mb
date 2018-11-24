@@ -11,6 +11,8 @@ async function start() {
     while (true) {
         try {
             await device.write(0x75, [0, 1, 0xFF]);
+            let data = await device.read(0x75, 5);
+            console.info(data);
         } catch(e) {
             console.error(e);
         }

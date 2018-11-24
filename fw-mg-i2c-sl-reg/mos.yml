@@ -6,6 +6,9 @@ arch: esp8266
 tags:
   - c
 
+includes:
+  - include
+
 sources:
   - src
 
@@ -19,6 +22,7 @@ libs:
 
 config_schema:
   - ["i2c_slave", "o", { title: "I2C Slave" }]
+  - ["i2c_slave.address", "i", 0x75, { title: "address" }]
   - ["i2c_slave.sda", "i", 12, { title: "SDA pin" }]
   - ["i2c_slave.scl", "i", 14, { title: "SCL pin" }]
 

@@ -1,0 +1,1 @@
+bool i2c_slave_init();

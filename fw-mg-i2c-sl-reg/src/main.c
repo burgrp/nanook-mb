@@ -3,7 +3,7 @@
 #include "frozen.h"
 #include "mgos_mqtt.h"
 #include "mgos_timers.h"
-#include "mgos_gpio.h"
+#include "i2c_slave.h"
 
 #define UNUSED(x) (void)(x)
 
@@ -62,7 +62,7 @@ bool readRegMap()
         registers[i].meta = strdup("{}");
       }
 
-      // disabled due to bug in json_setf, which srews up resulting JSON
+      // disabled due to bug in json_setf, which screws up resulting JSON
       // char metaBuffer[1000];
       // struct json_out metaOut = JSON_OUT_BUF(metaBuffer, sizeof(metaBuffer));
       // json_setf(registers[i].meta, strlen(registers[i].meta), &metaOut, ".device", "%Q", mgos_config_get_device_id(&mgos_sys_config));
@@ -175,117 +175,6 @@ void advertiseTimerHandler(void *arg)
   advertise();
 }
 
-int bitCounter;
-//int byteCounter;
-//char rxByte;
-//bool rxMode;
-
-void i2cDebug(void *arg)
-{
-  UNUSED(arg);
-  LOG(LL_INFO, ("I2C cnt: %d", bitCounter));
-  //bitCounter = -1;
-}
-
-int sdaPin;
-int sclPin;
-
-// char rxBuffer[5];
-// char txBuffer[5];
-
-int sda = 1;
-int scl = 1;
-
-void sdaIntHandler()
-{
-  sda = mgos_gpio_read(sdaPin);
-  scl = mgos_gpio_read(sclPin);
-
-  if (scl)
-  {
-    if (sda)
-    {
-      // stop condition
-      bitCounter = -1;
-      LOG(LL_INFO, ("STOP: %d", bitCounter));
-    }
-    else
-    {
-      // start condition
-      bitCounter = -1;
-      //byteCounter = -1;
-      //LOG(LL_INFO, ("START: %d", bitCounter));
-    }
-  }
-}
-
-void sclIntHandler()
-{
-  sda = mgos_gpio_read(sdaPin);
-  scl = mgos_gpio_read(sclPin);
-
-  bool pullSda = false;
-
-  if (scl)
-  {
-    // on rising edge
-
-    if (bitCounter < 8)
-    {
-      if (bitCounter == 0)
-      {
-        //rxByte = 0;
-      }
-
-      //rxByte = (rxByte << 1) | sda;
-
-      if (bitCounter == 7)
-      {
-        // address = rxByte >> 1;
-        //enabled = address == 0x75;
-        //rxMode = true;
-      }
-    }
-  }
-  else
-  {
-    // on falling edge
-
-    bitCounter++;
-    if (bitCounter == 9)
-    {
-      bitCounter = 0;
-    }  
-
-  }
-
-  pullSda = bitCounter == 8;
-
-  mgos_gpio_set_mode(sdaPin, pullSda ? MGOS_GPIO_MODE_OUTPUT : MGOS_GPIO_MODE_INPUT);
-}
-
-bool initI2C()
-{
-  sdaPin = mgos_config_get_i2c_slave_sda(&mgos_sys_config);
-  sclPin = mgos_config_get_i2c_slave_scl(&mgos_sys_config);
-
-  mgos_gpio_set_pull(sdaPin, MGOS_GPIO_PULL_NONE);
-  mgos_gpio_set_pull(sclPin, MGOS_GPIO_PULL_NONE);
-
-  mgos_gpio_set_mode(sdaPin, MGOS_GPIO_MODE_INPUT);
-  mgos_gpio_set_mode(sclPin, MGOS_GPIO_MODE_INPUT);
-
-  mgos_gpio_write(sdaPin, 0);
-  mgos_gpio_write(sclPin, 0);
-
-  mgos_gpio_set_int_handler_isr(sdaPin, MGOS_GPIO_INT_EDGE_ANY, sdaIntHandler, NULL);
-  mgos_gpio_enable_int(sdaPin);
-
-  mgos_gpio_set_int_handler_isr(sclPin, MGOS_GPIO_INT_EDGE_ANY, sclIntHandler, NULL);
-  mgos_gpio_enable_int(sclPin);
-  return true;
-}
-
 enum mgos_app_init_result mgos_app_init(void)
 {
   LOG(LL_INFO, ("--------------------------------------------"));
@@ -295,7 +184,7 @@ enum mgos_app_init_result mgos_app_init(void)
     return MGOS_APP_INIT_ERROR;
   }
 
-  if (!initI2C())
+  if (!i2c_slave_init())
   {
     return MGOS_APP_INIT_ERROR;
   }
@@ -306,8 +195,6 @@ enum mgos_app_init_result mgos_app_init(void)
   }
 
   mgos_set_timer(10000, MGOS_TIMER_REPEAT, advertiseTimerHandler, NULL);
-
-  mgos_set_timer(1000, MGOS_TIMER_REPEAT, i2cDebug, NULL);
 
   LOG(LL_INFO, ("--------------------------------------------"));
 
