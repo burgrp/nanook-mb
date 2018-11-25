@@ -175,16 +175,30 @@ void advertiseTimerHandler(void *arg)
   advertise();
 }
 
+typedef struct
+{
+  unsigned char index;
+  int value;
+} __attribute__((packed)) I2cRegisterBuffer;
+
+I2cRegisterBuffer i2cRxBuffer;
+I2cRegisterBuffer i2cTxBuffer;
+
+void cb(void* arg) {
+  UNUSED(arg);
+  LOG(LL_INFO, ("I2C write: %d %d", i2cRxBuffer.index, i2cRxBuffer.value));
+}
+
 enum mgos_app_init_result mgos_app_init(void)
 {
-  LOG(LL_INFO, ("--------------------------------------------"));
+  LOG(LL_INFO, ("-------------------------------------------- %d", sizeof(i2cRxBuffer)));
+
+  i2c_slave_set_rx_buffer(&i2cRxBuffer, sizeof(i2cRxBuffer));
+  i2c_slave_set_tx_buffer(&i2cRxBuffer, sizeof(i2cTxBuffer));
+
+  i2c_slave_set_stop_wr_event_cb(cb, (void*)123);
 
   if (!readRegMap())
-  {
-    return MGOS_APP_INIT_ERROR;
-  }
-
-  if (!i2c_slave_init())
   {
     return MGOS_APP_INIT_ERROR;
   }

@@ -6,9 +6,6 @@ arch: esp8266
 tags:
   - c
 
-includes:
-  - include
-
 sources:
   - src
 
@@ -17,13 +14,15 @@ filesystem:
   - fs-build
 
 libs:
+  - origin: https://github.com/mongoose-os-libs/rpc-service-config
+  - origin: https://github.com/mongoose-os-libs/rpc-service-fs
+  - origin: https://github.com/mongoose-os-libs/rpc-uart
   - origin: https://github.com/mongoose-os-libs/wifi
   - origin: https://github.com/mongoose-os-libs/mqtt
+  - origin: ../mg-i2c-slave
 
 config_schema:
-  - ["i2c_slave", "o", { title: "I2C Slave" }]
-  - ["i2c_slave.address", "i", 0x75, { title: "address" }]
-  - ["i2c_slave.sda", "i", 12, { title: "SDA pin" }]
-  - ["i2c_slave.scl", "i", 14, { title: "SCL pin" }]
+  - ["i2c_slave.enable", true]
+  - ["i2c_slave.address", 0x75]
 
-manifest_version: 2017-09-29
+manifest_version: 2018-06-20
