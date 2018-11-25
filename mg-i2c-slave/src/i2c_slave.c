@@ -1,5 +1,8 @@
 #include "mgos.h"
 #include "mgos_gpio.h"
+#include "mgos_timers.h"
+
+#define UNUSED(x) (void)(x)
 
 int address;
 int sdaPin;
@@ -35,11 +38,12 @@ void *stopWrEventCbArg;
 void sdaIntHandler()
 {
   mgos_ints_disable();
+  
   sda = mgos_gpio_read(sdaPin);
+  scl = mgos_gpio_read(sclPin);
 
   if (scl)
   {
-
     if (sda)
     {
       // stop condition
@@ -56,9 +60,12 @@ void sdaIntHandler()
   mgos_ints_enable();
 }
 
+int releaseSdaTimerCounter;
+
 void sclIntHandler()
 {
   mgos_ints_disable();
+  
   sda = mgos_gpio_read(sdaPin);
   scl = mgos_gpio_read(sclPin);
 
@@ -86,14 +93,6 @@ void sclIntHandler()
           else
           {
             masterReads = rxByte & 1;
-            if (startRdIsrCb && masterReads)
-            {
-              startRdIsrCb(startRdIsrCbArg);
-            }
-            if (startWrIsrCb && !masterReads)
-            {
-              startWrIsrCb(startWrIsrCbArg);
-            }
           }
         }
         else
@@ -101,28 +100,6 @@ void sclIntHandler()
           if (!masterReads && byteCounter < rxBufferSize)
           {
             rxBuffer[byteCounter] = rxByte;
-            if (byteCounter == rxBufferSize - 1)
-            {
-              if (stopWrIsrCb)
-              {
-                stopWrIsrCb(stopWrIsrCbArg);
-              }
-              if (stopWrEventCb)
-              {
-                mgos_invoke_cb(stopWrEventCb, stopWrEventCbArg, true);
-              }
-            }
-          }
-          if (masterReads && byteCounter == txBufferSize - 1)
-          {
-            if (stopRdIsrCb)
-            {
-              stopRdIsrCb(stopRdIsrCbArg);
-            }
-            if (stopRdEventCb)
-            {
-              mgos_invoke_cb(stopRdEventCb, stopRdEventCbArg, true);
-            }
           }
         }
       }
@@ -131,6 +108,46 @@ void sclIntHandler()
   else
   {
     // on falling edge
+    
+    if (bitCounter == 8)
+    { 
+
+      if (byteCounter == -1)
+      {
+        if (startRdIsrCb && masterReads)
+        {
+          startRdIsrCb(startRdIsrCbArg);
+        }
+        if (startWrIsrCb && !masterReads)
+        {
+          startWrIsrCb(startWrIsrCbArg);
+        }
+      }
+
+      if (!masterReads && byteCounter == rxBufferSize - 1)
+      {
+        if (stopWrIsrCb)
+        {
+          stopWrIsrCb(stopWrIsrCbArg);
+        }
+        if (stopWrEventCb)
+        {
+          mgos_invoke_cb(stopWrEventCb, stopWrEventCbArg, true);
+        }
+      }
+
+      if (masterReads && byteCounter == txBufferSize - 1)
+      {
+        if (stopRdIsrCb)
+        {
+          stopRdIsrCb(stopRdIsrCbArg);
+        }
+        if (stopRdEventCb)
+        {
+          mgos_invoke_cb(stopRdEventCb, stopRdEventCbArg, true);
+        }
+      }
+    }
 
     bitCounter++;
     if (bitCounter == 9)
@@ -144,6 +161,7 @@ void sclIntHandler()
                              (!masterReads && byteCounter < rxBufferSize))) ||
         (bitCounter < 8 && masterReads && byteCounter > -1 && byteCounter < txBufferSize && !((txBuffer[byteCounter] >> (7 - bitCounter)) & 1));
 
+    releaseSdaTimerCounter = pullSda ? 10 : 0;
     mgos_gpio_set_mode(sdaPin, pullSda ? MGOS_GPIO_MODE_OUTPUT_OD : MGOS_GPIO_MODE_INPUT);
     if (!pullSda)
     {
@@ -152,6 +170,20 @@ void sclIntHandler()
   }
 
   mgos_ints_enable();
+}
+
+void safetyReleaseSdaTimerHandler(void *arg)
+{
+  UNUSED(arg);
+  if (releaseSdaTimerCounter > 0)
+  {
+    releaseSdaTimerCounter--;
+    if (releaseSdaTimerCounter == 0)
+    {
+      mgos_gpio_set_mode(sdaPin, MGOS_GPIO_MODE_INPUT);
+      LOG(LL_WARN, ("SDA released by safety timer"));
+    }
+  }
 }
 
 void i2c_slave_set_rx_buffer(void *buffer, int size)
@@ -241,6 +273,8 @@ bool mgos_mg_i2c_slave_init()
 
     mgos_gpio_set_int_handler_isr(sclPin, MGOS_GPIO_INT_EDGE_ANY, sclIntHandler, NULL);
     mgos_gpio_enable_int(sclPin);
+
+    mgos_set_timer(1000, MGOS_TIMER_REPEAT, safetyReleaseSdaTimerHandler, NULL);
   }
 
   return true;

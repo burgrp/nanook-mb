@@ -1,0 +1,3 @@
+#!/bin/bash
+cd fw-node
+node src/main.js

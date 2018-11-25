@@ -1,7 +1,8 @@
 author: DEVICE-FARM
 description: WiFi I2C slave register interface
 version: 1.0
-arch: esp8266
+#arch: esp8266
+arch: esp32
 
 tags:
   - c
@@ -24,5 +25,7 @@ libs:
 config_schema:
   - ["i2c_slave.enable", true]
   - ["i2c_slave.address", 0x75]
+  - ["i2c_slave.sda_gpio", 35]
+  - ["i2c_slave.scl_gpio", 34]
 
 manifest_version: 2018-06-20

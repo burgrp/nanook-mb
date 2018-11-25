@@ -175,28 +175,53 @@ void advertiseTimerHandler(void *arg)
   advertise();
 }
 
+void checkRegistersTimerHandler(void *arg) {
+  UNUSED(arg);
+  for (int i = 0; i < registerCount; i++) {
+    if (registers[i].changedByI2C) {
+      registers[i].changedByI2C = false;
+      LOG(LL_INFO, ("Register %s changed by I2C to: %d", registers[i].name, registers[i].value));
+      publishValue(&registers[i]);
+    }
+  }
+}
+
 typedef struct
 {
   unsigned char index;
   int value;
+  short crc;
 } __attribute__((packed)) I2cRegisterBuffer;
 
 I2cRegisterBuffer i2cRxBuffer;
 I2cRegisterBuffer i2cTxBuffer;
 
-void cb(void* arg) {
+void i2cWriteCallback(void* arg) {
   UNUSED(arg);
-  LOG(LL_INFO, ("I2C write: %d %d", i2cRxBuffer.index, i2cRxBuffer.value));
+  short crc = 0x1234 ^ i2cRxBuffer.index ^ (i2cRxBuffer.value >> 16) ^ (i2cRxBuffer.value & 0xFFFF);
+  //LOG(LL_INFO, ("CRC calc:%d rcv:%d", crc, i2cRxBuffer.crc));
+  int index = i2cRxBuffer.index;
+  if (crc == i2cRxBuffer.crc && index < registerCount && registers[index].value != i2cRxBuffer.value) {
+    registers[index].value = i2cRxBuffer.value;
+    registers[index].changedByI2C = true;
+  }
 }
+
+void i2cReadCallback(void* arg) {
+  UNUSED(arg);
+  //for (int i = 0; i < )
+}
+
 
 enum mgos_app_init_result mgos_app_init(void)
 {
   LOG(LL_INFO, ("-------------------------------------------- %d", sizeof(i2cRxBuffer)));
 
   i2c_slave_set_rx_buffer(&i2cRxBuffer, sizeof(i2cRxBuffer));
-  i2c_slave_set_tx_buffer(&i2cRxBuffer, sizeof(i2cTxBuffer));
+  i2c_slave_set_tx_buffer(&i2cTxBuffer, sizeof(i2cTxBuffer));
 
-  //i2c_slave_set_stop_wr_event_cb(cb, (void*)123);
+  i2c_slave_set_stop_wr_isr_cb(i2cWriteCallback, (void*)123);  
+  i2c_slave_set_start_rd_isr_cb(i2cReadCallback, (void*)123);  
 
   if (!readRegMap())
   {
@@ -209,6 +234,7 @@ enum mgos_app_init_result mgos_app_init(void)
   }
 
   mgos_set_timer(10000, MGOS_TIMER_REPEAT, advertiseTimerHandler, NULL);
+  mgos_set_timer(1000, MGOS_TIMER_REPEAT, checkRegistersTimerHandler, NULL);
 
   LOG(LL_INFO, ("--------------------------------------------"));
 
