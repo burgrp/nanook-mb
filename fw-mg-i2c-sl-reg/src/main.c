@@ -196,7 +196,7 @@ enum mgos_app_init_result mgos_app_init(void)
   i2c_slave_set_rx_buffer(&i2cRxBuffer, sizeof(i2cRxBuffer));
   i2c_slave_set_tx_buffer(&i2cRxBuffer, sizeof(i2cTxBuffer));
 
-  i2c_slave_set_stop_wr_event_cb(cb, (void*)123);
+  //i2c_slave_set_stop_wr_event_cb(cb, (void*)123);
 
   if (!readRegMap())
   {

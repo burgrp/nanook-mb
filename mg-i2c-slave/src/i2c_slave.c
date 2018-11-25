@@ -34,8 +34,8 @@ void *stopWrEventCbArg;
 
 void sdaIntHandler()
 {
+  mgos_ints_disable();
   sda = mgos_gpio_read(sdaPin);
-  scl = mgos_gpio_read(sclPin);
 
   if (scl)
   {
@@ -53,10 +53,12 @@ void sdaIntHandler()
       mgos_gpio_enable_int(sclPin);
     }
   }
+  mgos_ints_enable();
 }
 
 void sclIntHandler()
 {
+  mgos_ints_disable();
   sda = mgos_gpio_read(sdaPin);
   scl = mgos_gpio_read(sclPin);
 
@@ -148,6 +150,8 @@ void sclIntHandler()
       mgos_gpio_enable_int(sdaPin);
     }
   }
+
+  mgos_ints_enable();
 }
 
 void i2c_slave_set_rx_buffer(void *buffer, int size)
