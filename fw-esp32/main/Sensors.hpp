@@ -1,43 +1,57 @@
+/*
+    while (*list)
+    {
+      list = &((*list)->next);
+    }
+    *list = this;
+*/
+
+class Ticker
+{
+public:
+  virtual void tick() = 0;
+};
+
 class Sensor
 {
 public:
   const char *name;
-  Sensor *next;
 
-  Sensor(const char *name, Sensor **first)
+  Sensor(const char *name)
   {
     this->name = name;
-    this->next = nullptr;
-
-    while (*first) {
-      first = &((*first)->next);
-    }
-    *first = this;
   }
 
-  virtual void toJson(char* buffer, int len) = 0;
+  virtual void toJson(char *buffer, int len) = 0;
 };
 
-class FloatSensor: public Sensor {
+class FloatSensor : public Sensor
+{
 public:
   float value = 3.1;
-  
-  FloatSensor(const char *name, Sensor **first): Sensor(name, first) {
 
+  FloatSensor(const char *name) : Sensor(name)
+  {
   }
 
-  virtual void toJson(char* buffer, int len) {
+  virtual void toJson(char *buffer, int len)
+  {
     snprintf(buffer, len, "%f", value);
   }
 };
 
-class SensorLM75A : public FloatSensor
+class SensorLM75A : public FloatSensor, Ticker
 {
 public:
   int address;
 
-  SensorLM75A(const char *name, int address, Sensor **first) : FloatSensor(name, first)
+  SensorLM75A(const char *name, int address) : FloatSensor(name)
   {
+  }
+
+  virtual void tick()
+  {
+    LOGI("LM75A tick %s", name);
   }
 };
 
@@ -45,14 +59,15 @@ class Sensors
 {
 
 public:
-  SensorLM75A *coldWaterInTemp;
-  SensorLM75A *coldWaterOutTemp;
-  SensorLM75A *coldFrigoInTemp;
-  SensorLM75A *coldFrigoOutTemp;
-  SensorLM75A *hotFrigoInTemp;
-  SensorLM75A *hotFrigoOutTemp;
-  SensorLM75A *hotWaterInTemp;
-  SensorLM75A *hotWaterOutTemp;
+  SensorLM75A coldWaterInTemp;
+  SensorLM75A coldWaterOutTemp;
+  SensorLM75A coldFrigoInTemp;
+  SensorLM75A coldFrigoOutTemp;
+  SensorLM75A hotFrigoInTemp;
+  SensorLM75A hotFrigoOutTemp;
+  SensorLM75A hotWaterInTemp;
+  SensorLM75A hotWaterOutTemp;
+
   // SensorIasFlow coldWaterFlow;
   // SensorIasPressure coldWaterPressure;
   // SensorIasPressure coldFrigoPressure;
@@ -71,24 +86,49 @@ public:
   // psLow;
   // psHigh;
 
-  Sensor *first = nullptr;
+  //Sensor *list = nullptr;
 
-  Sensors()
+  //std::list<Sensor> list;// = new std::list();
+
+  std::list<Sensor *> list;
+
+  void dump()
   {
-    coldWaterInTemp = new SensorLM75A("coldWaterInTemp", 0x48, &first);
-    coldWaterOutTemp = new SensorLM75A("coldWaterOutTemp", 0x49, &first);
-    coldFrigoInTemp = new SensorLM75A("coldFrigoInTemp", 0x4A, &first);
-    coldFrigoOutTemp = new SensorLM75A("coldFrigoOutTemp", 0x4B, &first);
-    hotFrigoInTemp = new SensorLM75A("hotFrigoInTemp", 0x4D, &first);
-    hotFrigoOutTemp = new SensorLM75A("hotFrigoOutTemp", 0x4C, &first);
-    hotWaterInTemp = new SensorLM75A("hotWaterInTemp", 0x4E, &first);
-    hotWaterOutTemp = new SensorLM75A("hotWaterOutTemp", 0x4F, &first);
-
-    for (Sensor *s = first; s; s = s->next)
+    for (Sensor *s : list)
     {
       char json[100];
       s->toJson(json, sizeof(json));
       LOGI("%s %s", s->name, json);
     }
+  }
+
+  static void vTimerCallback(TimerHandle_t xTimer)
+  {
+    Sensors *sensors = (Sensors *)pvTimerGetTimerID(xTimer);
+    sensors->dump();
+  }
+
+  Sensors() : coldWaterInTemp("coldWaterInTemp", 0x48),
+              coldWaterOutTemp("coldWaterOutTemp", 0x49),
+              coldFrigoInTemp("coldFrigoInTemp", 0x4A),
+              coldFrigoOutTemp("coldFrigoOutTemp", 0x4B),
+              hotFrigoInTemp("hotFrigoInTemp", 0x4D),
+              hotFrigoOutTemp("hotFrigoOutTemp", 0x4C),
+              hotWaterInTemp("hotWaterInTemp", 0x4E),
+              hotWaterOutTemp("hotWaterOutTemp", 0x4F),
+              list({
+                  &coldWaterInTemp,
+                  &coldWaterOutTemp,
+                  &coldFrigoInTemp,
+                  &coldFrigoOutTemp,
+                  &hotFrigoInTemp,
+                  &hotFrigoOutTemp,
+                  &hotWaterInTemp,
+                  &hotWaterOutTemp,
+              })
+  {
+
+    TimerHandle_t timer = xTimerCreate("Sensors", pdMS_TO_TICKS(1000), pdTRUE, this, vTimerCallback);
+    xTimerStart(timer, pdMS_TO_TICKS(1000));
   }
 };

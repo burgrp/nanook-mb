@@ -1,4 +1,8 @@
 #include <cstring>
+#include <list>
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/timers.h"
 
 #include "esp_system.h"
 #include "esp_wifi.h"
@@ -15,8 +19,8 @@
 #define LOGD(format, ...) ESP_LOGD(NANOOK_TAG, format, ##__VA_ARGS__)
 #define LOGV(format, ...) ESP_LOGV(NANOOK_TAG, format, ##__VA_ARGS__)
 
-#include "nvm.hpp"
-#include "wifi.hpp"
+#include "NVM.hpp"
+#include "WiFi.hpp"
 #include "Sensors.hpp"
 
 extern "C"
@@ -28,7 +32,9 @@ extern "C"
         new NVM();
         new WiFi();
         new Sensors();
-        
+
+        //vTaskStartScheduler();
+
         LOGI("Application initialized.");
     }
 }
