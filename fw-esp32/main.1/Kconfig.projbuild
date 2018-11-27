@@ -1,0 +1,15 @@
+menu "NANOOK"
+
+config NANOOK_WIFI_SSID
+    string "WiFi SSID"
+    default ""
+    help
+	SSID (network name) of WiFi to connect to.
+
+config NANOOK_WIFI_PASSWORD
+    string "WiFi Password"
+    default ""
+    help
+	WiFi password (WPA or WPA2) of WiFi to connect to.
+
+endmenu
