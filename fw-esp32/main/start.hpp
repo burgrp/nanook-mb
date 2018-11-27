@@ -1,8 +1,12 @@
 #include <cstring>
+#include <string>
 #include <list>
 
+#include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/timers.h"
+#include "freertos/projdefs.h"
+
 
 #include "esp_system.h"
 #include "esp_wifi.h"

@@ -1,9 +1,9 @@
 class Sensor
 {
 public:
-  const char *name;
+  const char* name;
 
-  Sensor(const char *name)
+  Sensor(const char* name)
   {
     this->name = name;
   }

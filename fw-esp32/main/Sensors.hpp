@@ -1,7 +1,7 @@
 class SensorIasFlow : public SensorFloat
 {
 public:
-  SensorIasFlow(const char *name) : SensorFloat(name)
+  SensorIasFlow(const char* name) : SensorFloat(name)
   {
   }
 };
@@ -9,7 +9,7 @@ public:
 class SensorIasPressure : public SensorFloat
 {
 public:
-  SensorIasPressure(const char *name) : SensorFloat(name)
+  SensorIasPressure(const char* name) : SensorFloat(name)
   {
   }
 };
@@ -65,11 +65,12 @@ public:
 
   void dump()
   {
+    LOGI("------ REGISTERS ------");
     for (Sensor *s : list)
     {
       char json[100];
       s->toJson(json, sizeof(json));
-      LOGI("%s %s", s->name, json);
+      LOGI(" %s %s", s->name, json);
     }
   }
 
@@ -114,6 +115,12 @@ public:
                   &hotFrigoOutTemp,
                   &hotWaterInTemp,
                   &hotWaterOutTemp,
+                  &coldWaterFlow,
+                  &coldWaterPressure,
+                  &coldFrigoPressure,
+                  &hotWaterFlow,
+                  &hotWaterPressure,
+                  &hotFrigoPressure
               }),
               tickers({&coldWaterInTemp,
                        &coldWaterOutTemp,
@@ -122,7 +129,9 @@ public:
                        &hotFrigoInTemp,
                        &hotFrigoOutTemp,
                        &hotWaterInTemp,
-                       &hotWaterOutTemp})
+                       &hotWaterOutTemp,
+                       &coldSideAnalogSensors,
+                       &hotSideAnalogSensors})
   {
 
     TimerHandle_t dumpTimer = xTimerCreate("Sensors dump", pdMS_TO_TICKS(1000), pdTRUE, this, sensorsDumpCb);
