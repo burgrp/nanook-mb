@@ -1,57 +1,28 @@
-/*
-    while (*list)
-    {
-      list = &((*list)->next);
-    }
-    *list = this;
-*/
-
-class Ticker
+class SensorIasFlow : public SensorFloat
 {
 public:
-  virtual void tick() = 0;
-};
-
-class Sensor
-{
-public:
-  const char *name;
-
-  Sensor(const char *name)
+  SensorIasFlow(const char *name) : SensorFloat(name)
   {
-    this->name = name;
-  }
-
-  virtual void toJson(char *buffer, int len) = 0;
-};
-
-class FloatSensor : public Sensor
-{
-public:
-  float value = 3.1;
-
-  FloatSensor(const char *name) : Sensor(name)
-  {
-  }
-
-  virtual void toJson(char *buffer, int len)
-  {
-    snprintf(buffer, len, "%f", value);
   }
 };
 
-class SensorLM75A : public FloatSensor, Ticker
+class SensorIasPressure : public SensorFloat
 {
 public:
-  int address;
+  SensorIasPressure(const char *name) : SensorFloat(name)
+  {
+  }
+};
 
-  SensorLM75A(const char *name, int address) : FloatSensor(name)
+class AnalogSensorsBoard : public Ticker
+{
+public:
+  AnalogSensorsBoard(int address, SensorIasFlow *waterFlow, SensorIasPressure *waterPressure, SensorIasPressure *frigoPressure)
   {
   }
 
   virtual void tick()
   {
-    LOGI("LM75A tick %s", name);
   }
 };
 
@@ -68,12 +39,15 @@ public:
   SensorLM75A hotWaterInTemp;
   SensorLM75A hotWaterOutTemp;
 
-  // SensorIasFlow coldWaterFlow;
-  // SensorIasPressure coldWaterPressure;
-  // SensorIasPressure coldFrigoPressure;
-  // SensorIasFlow hotWaterFlow;
-  // SensorIasPressure hotWaterPressure;
-  // SensorIasPressure hotFrigoPressure;
+  SensorIasFlow coldWaterFlow;
+  SensorIasPressure coldWaterPressure;
+  SensorIasPressure coldFrigoPressure;
+  AnalogSensorsBoard coldSideAnalogSensors;
+
+  SensorIasFlow hotWaterFlow;
+  SensorIasPressure hotWaterPressure;
+  SensorIasPressure hotFrigoPressure;
+  AnalogSensorsBoard hotSideAnalogSensors;
 
   // compressorRamp;
   // compressorRelay;
@@ -86,11 +60,8 @@ public:
   // psLow;
   // psHigh;
 
-  //Sensor *list = nullptr;
-
-  //std::list<Sensor> list;// = new std::list();
-
   std::list<Sensor *> list;
+  std::list<Ticker *> tickers;
 
   void dump()
   {
@@ -102,10 +73,19 @@ public:
     }
   }
 
-  static void vTimerCallback(TimerHandle_t xTimer)
+  static void sensorsDumpCb(TimerHandle_t xTimer)
   {
     Sensors *sensors = (Sensors *)pvTimerGetTimerID(xTimer);
     sensors->dump();
+  }
+
+  static void sensorsTickCb(TimerHandle_t xTimer)
+  {
+    Sensors *sensors = (Sensors *)pvTimerGetTimerID(xTimer);
+    for (Ticker *t : sensors->tickers)
+    {
+      t->tick();
+    }
   }
 
   Sensors() : coldWaterInTemp("coldWaterInTemp", 0x48),
@@ -116,6 +96,15 @@ public:
               hotFrigoOutTemp("hotFrigoOutTemp", 0x4C),
               hotWaterInTemp("hotWaterInTemp", 0x4E),
               hotWaterOutTemp("hotWaterOutTemp", 0x4F),
+              coldWaterFlow("coldWaterFlow"),
+              coldWaterPressure("coldWaterPressure"),
+              coldFrigoPressure("coldFrigoPressure"),
+              coldSideAnalogSensors(0x70, &coldWaterFlow, &coldWaterPressure, &coldFrigoPressure),
+              hotWaterFlow("hotWaterFlow"),
+              hotWaterPressure("hotWaterPressure"),
+              hotFrigoPressure("hotFrigoPressure"),
+              hotSideAnalogSensors(0x71, &hotWaterFlow, &hotWaterPressure, &hotFrigoPressure),
+
               list({
                   &coldWaterInTemp,
                   &coldWaterOutTemp,
@@ -125,10 +114,21 @@ public:
                   &hotFrigoOutTemp,
                   &hotWaterInTemp,
                   &hotWaterOutTemp,
-              })
+              }),
+              tickers({&coldWaterInTemp,
+                       &coldWaterOutTemp,
+                       &coldFrigoInTemp,
+                       &coldFrigoOutTemp,
+                       &hotFrigoInTemp,
+                       &hotFrigoOutTemp,
+                       &hotWaterInTemp,
+                       &hotWaterOutTemp})
   {
 
-    TimerHandle_t timer = xTimerCreate("Sensors", pdMS_TO_TICKS(1000), pdTRUE, this, vTimerCallback);
-    xTimerStart(timer, pdMS_TO_TICKS(1000));
+    TimerHandle_t dumpTimer = xTimerCreate("Sensors dump", pdMS_TO_TICKS(1000), pdTRUE, this, sensorsDumpCb);
+    xTimerStart(dumpTimer, 0);
+
+    TimerHandle_t tickerTimer = xTimerCreate("Sensors tick", pdMS_TO_TICKS(100), pdTRUE, this, sensorsTickCb);
+    xTimerStart(tickerTimer, 0);
   }
 };
