@@ -7,7 +7,6 @@
 #include "freertos/timers.h"
 #include "freertos/projdefs.h"
 
-
 #include "esp_system.h"
 #include "esp_wifi.h"
 #include "esp_event_loop.h"
@@ -15,6 +14,7 @@
 #include "nvs_flash.h"
 #include "lwip/err.h"
 #include "lwip/sys.h"
+#include "mqtt_client.h"
 
 #define NANOOK_TAG "NANOOK"
 #define LOGE(format, ...) ESP_LOGE(NANOOK_TAG, format, ##__VA_ARGS__)
@@ -36,3 +36,4 @@
 #include "SensorBoolean.hpp"
 #include "OnboardPeripherals.hpp"
 #include "Sensors.hpp"
+#include "DfRegisters.hpp"

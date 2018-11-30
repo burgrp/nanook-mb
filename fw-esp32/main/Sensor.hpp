@@ -9,4 +9,7 @@ public:
   }
 
   virtual void toJson(char *buffer, int len) = 0;
+  virtual void fromJson(char *json) {
+    
+  };
 };

@@ -137,8 +137,8 @@ public:
                        &onboardPeripherals})
   {
 
-    TimerHandle_t dumpTimer = xTimerCreate("Sensors dump", pdMS_TO_TICKS(1000), pdTRUE, this, sensorsDumpCb);
-    xTimerStart(dumpTimer, 0);
+    //TimerHandle_t dumpTimer = xTimerCreate("Sensors dump", pdMS_TO_TICKS(1000), pdTRUE, this, sensorsDumpCb);
+    //xTimerStart(dumpTimer, 0);
 
     TimerHandle_t tickerTimer = xTimerCreate("Sensors tick", pdMS_TO_TICKS(100), pdTRUE, this, sensorsTickCb);
     xTimerStart(tickerTimer, 0);

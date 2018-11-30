@@ -12,4 +12,10 @@ config NANOOK_WIFI_PASSWORD
     help
 	WiFi password (WPA or WPA2) of WiFi to connect to.
 
+config NANOOK_MQTT_BROKER
+    string "MQTT broker"
+    default "mqtt://iot.eclipse.org"
+    help
+	URI of MQTT broker. May contain username and password, i.e. mqtt://username:password@iot.eclipse.org:1884 .
+
 endmenu

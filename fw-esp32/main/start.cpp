@@ -8,7 +8,8 @@ extern "C"
 
         new NVM();
         new WiFi();
-        new Sensors();
+        Sensors* sensors = new Sensors();
+        new DfRegisters(sensors);
 
         //vTaskStartScheduler();
 

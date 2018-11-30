@@ -64,7 +64,8 @@
                     },
                     "transducerFrigoPressure": {
                         "min": -1,
-                        "max": 9.3
+                        "max": 9.3,
+                        "calibration": 0.2
                     }
                 },
                 "hot": {
@@ -80,7 +81,8 @@
                     },
                     "transducerFrigoPressure": {
                         "min": 0,
-                        "max": 34.5
+                        "max": 34.5,
+                        "calibration": 1.8
                     }
                 }
             }
