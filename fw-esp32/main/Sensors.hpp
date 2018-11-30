@@ -1,31 +1,3 @@
-class SensorIasFlow : public SensorFloat
-{
-public:
-  SensorIasFlow(const char* name) : SensorFloat(name)
-  {
-  }
-};
-
-class SensorIasPressure : public SensorFloat
-{
-public:
-  SensorIasPressure(const char* name) : SensorFloat(name)
-  {
-  }
-};
-
-class AnalogSensorsBoard : public Ticker
-{
-public:
-  AnalogSensorsBoard(int address, SensorIasFlow *waterFlow, SensorIasPressure *waterPressure, SensorIasPressure *frigoPressure)
-  {
-  }
-
-  virtual void tick()
-  {
-  }
-};
-
 class Sensors
 {
 
@@ -49,29 +21,31 @@ public:
   SensorIasPressure hotFrigoPressure;
   AnalogSensorsBoard hotSideAnalogSensors;
 
-  // compressorRamp;
-  // compressorRelay;
-  // eevPosition;
-  // coldWaterPump;
-  // hotWaterPump;
-  // eevNFault;
-  // i2cAlert;
-  // pwrOk;
-  // psLow;
-  // psHigh;
+  SensorMCP4706 compressorRamp;
+  SensorEevPosition eevPosition;
+  SensorBoolean compressorRelay;
+  SensorBoolean coldWaterPump;
+  SensorBoolean hotWaterPump;
+  SensorBoolean eevNFault;
+  SensorBoolean i2cAlert;
+  SensorBoolean pwrOk;
+  SensorBoolean psLow;
+  SensorBoolean psHigh;
+  OnboardPeripherals onboardPeripherals;
 
   std::list<Sensor *> list;
   std::list<Ticker *> tickers;
 
   void dump()
   {
-    LOGI("------ REGISTERS ------");
+    LOGI("/----- REGISTERS ------");
     for (Sensor *s : list)
     {
       char json[100];
       s->toJson(json, sizeof(json));
-      LOGI(" %s %s", s->name, json);
+      LOGI("| %s %s", s->name, json);
     }
+    LOGI("\\----------------------");
   }
 
   static void sensorsDumpCb(TimerHandle_t xTimer)
@@ -105,23 +79,50 @@ public:
               hotWaterPressure("hotWaterPressure"),
               hotFrigoPressure("hotFrigoPressure"),
               hotSideAnalogSensors(0x71, &hotWaterFlow, &hotWaterPressure, &hotFrigoPressure),
-
-              list({
-                  &coldWaterInTemp,
-                  &coldWaterOutTemp,
-                  &coldFrigoInTemp,
-                  &coldFrigoOutTemp,
-                  &hotFrigoInTemp,
-                  &hotFrigoOutTemp,
-                  &hotWaterInTemp,
-                  &hotWaterOutTemp,
-                  &coldWaterFlow,
-                  &coldWaterPressure,
-                  &coldFrigoPressure,
-                  &hotWaterFlow,
-                  &hotWaterPressure,
-                  &hotFrigoPressure
-              }),
+              compressorRamp("compressorRamp"),
+              eevPosition("eevPosition"),
+              compressorRelay("compressorRelay"),
+              coldWaterPump("coldWaterPump"),
+              hotWaterPump("hotWaterPump"),
+              eevNFault("eevNFault"),
+              i2cAlert("i2cAlert"),
+              pwrOk("pwrOk"),
+              psLow("psLow"),
+              psHigh("psHigh"),
+              onboardPeripherals(
+                  &eevPosition,
+                  &compressorRelay,
+                  &coldWaterPump,
+                  &hotWaterPump,
+                  &eevNFault,
+                  &i2cAlert,
+                  &pwrOk,
+                  &psLow,
+                  &psHigh),
+              list({&coldWaterInTemp,
+                    &coldWaterOutTemp,
+                    &coldFrigoInTemp,
+                    &coldFrigoOutTemp,
+                    &hotFrigoInTemp,
+                    &hotFrigoOutTemp,
+                    &hotWaterInTemp,
+                    &hotWaterOutTemp,
+                    &coldWaterFlow,
+                    &coldWaterPressure,
+                    &coldFrigoPressure,
+                    &hotWaterFlow,
+                    &hotWaterPressure,
+                    &hotFrigoPressure,
+                    &compressorRamp,
+                    &eevPosition,
+                    &compressorRelay,
+                    &coldWaterPump,
+                    &hotWaterPump,
+                    &eevNFault,
+                    &i2cAlert,
+                    &pwrOk,
+                    &psLow,
+                    &psHigh}),
               tickers({&coldWaterInTemp,
                        &coldWaterOutTemp,
                        &coldFrigoInTemp,
@@ -131,7 +132,9 @@ public:
                        &hotWaterInTemp,
                        &hotWaterOutTemp,
                        &coldSideAnalogSensors,
-                       &hotSideAnalogSensors})
+                       &hotSideAnalogSensors,
+                       &compressorRamp,
+                       &onboardPeripherals})
   {
 
     TimerHandle_t dumpTimer = xTimerCreate("Sensors dump", pdMS_TO_TICKS(1000), pdTRUE, this, sensorsDumpCb);
