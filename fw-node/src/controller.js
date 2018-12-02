@@ -83,7 +83,7 @@ module.exports = async config => {
         await config.peripherals.setHotWaterPump(true);
         await config.peripherals.eevRun(500, true);
         await asyncWait(10000);
-        await config.peripherals.eevRun(-400, true);
+        await config.peripherals.eevRun(-230, true);
         await asyncWait(2000);
 
         function periodicChecks() {
