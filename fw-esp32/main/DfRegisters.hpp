@@ -72,11 +72,16 @@ class Register
         toJson(data, sizeof(data));
 
         LOGI("PUB %s %s", name, data);
-        esp_mqtt_client_publish(client, topic, data, strlen(data), 1, 0);
+        esp_mqtt_client_publish(client, topic, data, strlen(data), 0, 0);
     }
 
-    void advertise() {
+    void advertise()
+    {
         LOGI("ADV %s", name);
+        char topic[TOPIC_BUF_SIZE];
+        formatTopic(topic, "advertise");
+        const char* data = "{\"device\":\"nanook\"}";
+        esp_mqtt_client_publish(client, topic, data, strlen(data), 0, 0);
     }
 
     virtual bool readOnly()
@@ -114,7 +119,15 @@ class DfRegisters
     Sensors *sensors;
     std::list<Register *> registers;
 
-    const char* advertiseTopic = "register/advertise!";
+    const char *advertiseTopic = "register/advertise!";
+
+    void advertise()
+    {
+        for (Register *reg : registers)
+        {
+            reg->advertise();
+        }
+    }
 
     void handleMqttEvent(esp_mqtt_event_handle_t event)
     {
@@ -124,8 +137,7 @@ class DfRegisters
             for (Register *reg : registers)
             {
                 reg->subscribe();
-            }
-            ;
+            };
             LOGI("Subscribing to %s", advertiseTopic);
             esp_mqtt_client_subscribe(event->client, advertiseTopic, 1);
             break;
@@ -136,10 +148,9 @@ class DfRegisters
             {
                 reg->checkMessage(event->topic, event->topic_len, event->data, event->data_len);
             }
-            if (strncmp(advertiseTopic, event->topic, event->topic_len) == 0) {
-                for (Register *reg : registers) {
-                    reg->advertise();
-                }
+            if (strncmp(advertiseTopic, event->topic, event->topic_len) == 0)
+            {
+                advertise();
             }
             break;
 
@@ -156,6 +167,12 @@ class DfRegisters
     {
         ((DfRegisters *)event->user_context)->handleMqttEvent(event);
         return ESP_OK;
+    }
+
+    static void advertiseCb(TimerHandle_t xTimer)
+    {
+        DfRegisters *dfRegisters = (DfRegisters *)pvTimerGetTimerID(xTimer);
+        dfRegisters->advertise();
     }
 
   public:
@@ -176,5 +193,8 @@ class DfRegisters
         {
             registers.push_back(new SensorRegister(s, client));
         }
+
+        TimerHandle_t advertiseTimer = xTimerCreate("DF regs advertise", pdMS_TO_TICKS(10000), pdTRUE, this, advertiseCb);
+        xTimerStart(advertiseTimer, 0);
     }
 };
