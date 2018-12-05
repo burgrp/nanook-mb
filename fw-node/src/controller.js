@@ -91,7 +91,7 @@ module.exports = async config => {
             checkRegisterMin(registers.coldWaterOutTemp, -10);
             //checkRegisterMin(registers.coldWaterFlow, 100);
             checkRegisterMin(registers.coldWaterPressure, 0.2);
-            checkRegisterMin(registers.hotWaterFlow, 200);
+            //checkRegisterMin(registers.hotWaterFlow, 200);
             checkRegisterMin(registers.hotWaterPressure, 0.3);
             checkRegisterMax(registers.hotFrigoPressure, 23);
         }
