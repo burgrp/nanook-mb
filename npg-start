@@ -1,4 +1,0 @@
-#!/bin/bash
-cd fw-node
-npm install
-node src/main.js

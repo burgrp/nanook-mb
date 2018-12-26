@@ -1,52 +1,54 @@
-Id,Designator,Quantity,Designation
-1,"REF**,REF**,REF**,REF**",4,MountingHole_3.7mm_Pad
-2,"K3,K1,K2",3,RELAY_2
-3,"C1,C13",2,2F
-4,"C2,C3,C5",3,10u
-5,"C4,C7,C9,C10,C11,C12",6,100n
-6,C6,1,10n
-7,C8,1,2.2M
-8,"D1,D3,D2",3,SK22
-9,J1,1,Power Switch
-10,J3,1,AUX
-11,J4,1,E2V
-12,J5,1,LPS
-13,J6,1,Pump Cold Side
-14,J7,1,Pump Hot Side
-15,J8,1,HPS
-16,"R1,R2,R6,R7,R10,R12,R13,R14,R15",9,4k7
-17,"R3,R4,R5",3,270R
-18,"R8,R9",2,0R22
-19,R11,1,1K5
-20,S1,1,SB2P
-21,T1,1,BC817
-22,"U1,U2",2,NCP1117-3.3_SOT223
-23,U3,1,Mean Well PM-15-5
-24,U4,1,Omega2
-25,U5,1,STM32F030K6Tx
-26,U7,1,MCP4706A0T-E/CH
-27,"U8,U9",2,G3MB-5V-SSR
-28,X1,1,SWD
-29,X2,1,I2C Cold Side
-30,X3,1,I2C Hot Side
-31,X4,1,I2C Aux
-32,D4,1,LED_RGB
-33,"R16,R17,R18",3,4R7/2W
-34,J10,1,Service
-35,U6,1,DRV8833
-36,J13,1,SSR 220
-37,J14,1,SSR 0-5V
-38,J15,1,Compressor L1
-39,J16,1,Compressor L2
-40,J17,1,Compressor L3
-41,J18,1,SSR Output L1
-42,J19,1,SSR Output L2
-43,J20,1,SSR Output L3
-44,J21,1,SSR Input L1
-45,J22,1,SSR Input L2
-46,J23,1,SSR Input L3
-47,J2,1,Mains L1
-48,J9,1,Mains L2
-49,J11,1,Mains L3
-50,J12,1,Mains N
-51,REF***,1,OSHW-Logo_11.4x12mm_SilkScreen
+Quantity,Designator,Designation
+2,"C13,C1",2F
+4,"REF**,REF**,REF**,REF**",MountingHole_3.7mm_Pad
+3,"K3,K1,K2",RELAY_2
+6,"C4,C7,C9,C10,C11,C12",100n
+1,C5,10u
+1,C6,10n
+1,C8,2.2M
+4,"D1,D3,D2,D5",SK22
+1,J1,Power Switch
+1,J3,AUX
+1,J4,E2V
+1,J5,LPS
+1,J6,Pump Cold Side
+1,J7,Pump Hot Side
+1,J8,HPS
+9,"R1,R2,R6,R7,R10,R12,R13,R14,R15",4k7
+3,"R3,R4,R5",270R
+2,"R8,R9",0R22
+1,R11,1K5
+1,S1,SB2P
+1,T1,BC817
+2,"U1,U2",NCP1117-3.3_SOT223
+1,U3,Mean Well PM-15-5
+1,U5,STM32F030K6Tx
+1,U7,MCP4706A0T-E/CH
+2,"U8,U9",G3MB-5V-SSR
+1,X1,SWD
+1,X2,I2C Cold Side
+1,X3,I2C Hot Side
+1,X4,I2C Aux
+1,D4,LED_RGB
+3,"R16,R17,R18",4R7/2W
+1,J10,Service
+1,U6,DRV8833
+1,J13,SSR 220
+1,J14,SSR 0-5V
+1,J15,Compressor L1
+1,J16,Compressor L2
+1,J17,Compressor L3
+1,J18,SSR Output L1
+1,J19,SSR Output L2
+1,J20,SSR Output L3
+1,J21,SSR Input L1
+1,J22,SSR Input L2
+1,J23,SSR Input L3
+1,J2,Mains L1
+1,J9,Mains L2
+1,J11,Mains L3
+1,J12,Mains N
+1,REF***,OSHW-Logo_11.4x12mm_SilkScreen
+2,"C2,C3",1m
+1,J24,GS3
+1,M1,NanoPi-Duo

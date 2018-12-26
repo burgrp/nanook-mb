@@ -1,4 +1,0 @@
-factory,  app,  factory,  , 1M
-fs,       data, fat,      , 1M 
-nvs,      data, nvs,      , 0x4000
-
