@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/paul/df/nanook-mb/board/nanook-mb.sch)
-    (date "Tue 12 Mar 2019 12:51:44 AM CET")
+    (date "Tue 12 Mar 2019 11:48:47 AM CET")
     (tool "Eeschema 5.0.2-bee76a0~70~ubuntu16.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
