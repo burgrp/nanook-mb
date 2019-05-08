@@ -15,4 +15,4 @@ Nanook-mb is control board for open source [NANOOK ground-water heat pump](http:
 
 ## System connections block diagram
 
-![Block Diagram](/images/block-diagram.svg)
+![Block Diagram](/images/dia.png)
