@@ -70,7 +70,9 @@ There are three connectors on board, all of them sharing single I<sup>2</sup>C b
 There may be two separate cables for each analog sensors board, or there may be single cable shared by both analog sensors boards.
 
 ### Analog sensors board to temperature sensors (#14, #15, #16, #17, #24, #25, #26, #27)
-There are waterproof NTC thermistors with JST-XH connectors available. They may be used directly with no additional crimping needed.
+Temperatures are measured by NTC 10K 1% 3950 thermistors.
+
+There are waterproof thermistors with JST-XH connectors available. They may be used directly with no additional crimping needed.
 
 ![Waterproof NTC with JST-XH](images/ntc.jpg)
 
