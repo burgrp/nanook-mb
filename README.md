@@ -113,3 +113,9 @@ Water sensors are located as follows:
 ![Ultisolar flow sensor](images/ultisolar-flow-1.jpg)
 
 USC-HS10TA BSP is a suitable water flow sensor
+
+### MB to WiFi antenna (#28)
+
+Main board is connected to network by WiFi. Although there is small chip antenna integrated on board, an external antenna is needed because of metal enclosure. Connect a 2.4GHz antenna by IPEX connector.
+
+![IPEX 2.4GHz panel mount antenna](images/ipex-antenna.jpg)
