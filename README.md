@@ -13,6 +13,9 @@ Nanook-mb is control board for open source [NANOOK ground-water heat pump](http:
   - refrigerant pressure sensors on cold and hot side
 - providing configuration web user interface via WiFi connection
 
+![nanook-mb](images/render1.png)
+![nanook-mb](images/render2.png)
+
 ## Safety warnings
 TBD: grounding, connectors, switching (rocker vs. ext. CB)
 
