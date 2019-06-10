@@ -42,7 +42,7 @@ These are six 2.5mm<sup>2</sup> wires terminated by 6.3 Fastons on board side an
 There is a rocker switch to turn heat pump ON and OFF. The switch just disconnects onboard power supply, which in turn opens onboard coil relays. This means that the board is still powered even with the rocker switch turned off.
 
 ### MB to PWM SSR control lines (#6, #7)
-These lines connects main board and PWM SSR control circuit. Two lines supplies the control circuit with 230V AC power (#6). The other two are control signal 0-5V. Leave SSR contacts 4-20mA and +5V unconnected.
+These lines connects main board and PWM SSR control circuit. Two lines supply the control circuit with 230V AC power (#6). The other two are control signal 0-5V. Leave SSR contacts 4-20mA and +5V unconnected.
 
 ![LSA-TH3P70Y](images/LSA-TH3P70Y.jpg)
 
