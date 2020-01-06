@@ -89,7 +89,18 @@ Thermistors are located as follows:
 - #27: "hot side refrigerant output" - condenser refrigerant output to EEV or refrigerant accumulator
 
 ### Analog sensors board to pressure sensors (#18, #19, #22, #23)
-Pressure sensors are available either with other connectors than JST-XH or with no connector at all. You need to crimp proper three wire JST-XH connectors as 1:GND, 2:DATA, 3:+5V.
+Pressure sensors are available either with other connectors than JST-XH or with no connector at all. You need to crimp proper three wire JST-XH connectors as:
+
+- 1: GND (black)
+- 2: SIGNAL (yellow)
+- 3: +5V (red)
+
+and for Carel sensors with green, white and black wires as: 
+
+- 1: GND (green)
+- 2: SIGNAL (white)
+- 3: +5V (black)
+
 
 Pressure sensors are located as follows:
 - #18: "cold side refrigerant pressure" - compressor suction, -1...9,3bar => 0...5V, recommended SPKT0013RO
@@ -109,7 +120,10 @@ Carel SPKT refrigerant pressure sensor
 
 
 ### Analog sensors board to water flow sensors (#20, #21)
-Water flow sensors are available either with other connectors than JST-XH or with no connector at all. You need to crimp proper three wire JST-XH connectors as 1:GND, 2:DATA, 3:+5V.
+Water flow sensors are available either with other connectors than JST-XH or with no connector at all. You need to crimp proper three wire JST-XH connectors as 
+- 1: GND (black)
+- 2: SIGNAL (yellow)
+- 3: +5V (red)
 
 Water sensors are located as follows:
 - #20: "cold side water flow" - collector water loop
