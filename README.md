@@ -150,7 +150,7 @@ sudo npm install -g @device.farm/silicon
 
 And then build and flash by:
 ```sh
-silicon build -sf
+silicon build -dsf
 ```
 
 The `-f` parameter instructs Silicon to flash the image using openocd, which should be connected to your MCU and listening on port 4444.
