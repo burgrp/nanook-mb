@@ -138,3 +138,20 @@ USC-HS10TA BSP is a suitable water flow sensor
 Main board is connected to network by WiFi. Although there is small chip antenna integrated on board, an external antenna is needed because of metal enclosure. Connect a 2.4GHz antenna by IPEX connector.
 
 ![IPEX 2.4GHz panel mount antenna](images/ipex-antenna.jpg)
+
+## Compiling firmware
+In order to compile and flash firmware, you need to install Node.js, openocd and arm-none-eabi GCC.
+
+Source code is written our [Silicon build system](https://github.com/device-farm/silicon). 
+Install Silicon by:
+```sh
+sudo npm install -g @device.farm/silicon
+```
+
+And then build and flash by:
+```sh
+silicon build -sf
+```
+
+The `-f` parameter instructs Silicon to flash the image using openocd, which should be connected to your MCU and listening on port 4444.
+
