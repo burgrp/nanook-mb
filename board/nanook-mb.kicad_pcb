@@ -505,7 +505,7 @@
     )
   )
 
-  (module device.farm:RT314_Relay (layer F.Cu) (tedit 5C86E4F3) (tstamp 5B854824)
+  (module Drake:RT314_Relay (layer F.Cu) (tedit 5C86E4F3) (tstamp 5B854824)
     (at 185 147.38 180)
     (path /5B7C7404)
     (fp_text reference K3 (at -2 4.38 180) (layer F.SilkS)
@@ -541,7 +541,7 @@
     )
   )
 
-  (module device.farm:RT314_Relay (layer F.Cu) (tedit 5C86E4F3) (tstamp 5B854804)
+  (module Drake:RT314_Relay (layer F.Cu) (tedit 5C86E4F3) (tstamp 5B854804)
     (at 115 147.38 180)
     (path /5B7C7075)
     (fp_text reference K1 (at -2 4.38 180) (layer F.SilkS)
@@ -577,7 +577,7 @@
     )
   )
 
-  (module device.farm:RT314_Relay (layer F.Cu) (tedit 5C86E4F3) (tstamp 5B854814)
+  (module Drake:RT314_Relay (layer F.Cu) (tedit 5C86E4F3) (tstamp 5B854814)
     (at 150 147.38 180)
     (path /5B7C7318)
     (fp_text reference K2 (at -2 4.38 180) (layer F.SilkS)
@@ -613,7 +613,7 @@
     )
   )
 
-  (module device.farm:BCE005R5C205FS (layer F.Cu) (tedit 5CBF3A3B) (tstamp 5B9C15CA)
+  (module Drake:BCE005R5C205FS (layer F.Cu) (tedit 5CBF3A3B) (tstamp 5B9C15CA)
     (at 199.5 153.5 180)
     (path /5B9C1B9D)
     (fp_text reference C13 (at 0 11.5 180) (layer F.SilkS)
@@ -646,7 +646,7 @@
     )
   )
 
-  (module device.farm:BCE005R5C205FS (layer F.Cu) (tedit 5CBF3A3B) (tstamp 5B854707)
+  (module Drake:BCE005R5C205FS (layer F.Cu) (tedit 5CBF3A3B) (tstamp 5B854707)
     (at 216 132 180)
     (path /5B807524)
     (fp_text reference C1 (at 12 0 180) (layer F.SilkS)
@@ -679,7 +679,7 @@
     )
   )
 
-  (module device.farm:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B85476B)
+  (module Drake:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B85476B)
     (at 187.54 139.778 180)
     (path /5B7E3B33)
     (fp_text reference J1 (at 5.334 15.494 180) (layer F.SilkS) hide
@@ -713,7 +713,7 @@
     )
   )
 
-  (module device.farm:DG142R-4-5.08 (layer F.Cu) (tedit 5B849395) (tstamp 5B8547A1)
+  (module Drake:DG142R-4-5.08 (layer F.Cu) (tedit 5B849395) (tstamp 5B8547A1)
     (at 224.22 220.602)
     (path /5B7C4E6F)
     (fp_text reference J4 (at 5.334 15.494) (layer F.SilkS) hide
@@ -761,7 +761,7 @@
     )
   )
 
-  (module device.farm:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B8547B3)
+  (module Drake:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B8547B3)
     (at 193.96 220.602)
     (path /5B7DD7A7)
     (fp_text reference J5 (at 5.334 15.494) (layer F.SilkS) hide
@@ -795,7 +795,7 @@
     )
   )
 
-  (module device.farm:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B8547C5)
+  (module Drake:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B8547C5)
     (at 163.96 220.602)
     (path /5B7C500C)
     (fp_text reference J6 (at 5.334 15.494) (layer F.SilkS) hide
@@ -829,7 +829,7 @@
     )
   )
 
-  (module device.farm:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B8547D7)
+  (module Drake:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B8547D7)
     (at 178.96 220.602)
     (path /5B7C5141)
     (fp_text reference J7 (at 5.334 15.494) (layer F.SilkS) hide
@@ -863,7 +863,7 @@
     )
   )
 
-  (module device.farm:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B8547E9)
+  (module Drake:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B8547E9)
     (at 208.96 220.602)
     (path /5B7DDAED)
     (fp_text reference J8 (at 5.334 15.494) (layer F.SilkS) hide
@@ -897,7 +897,7 @@
     )
   )
 
-  (module device.farm:SB2P (layer F.Cu) (tedit 56B343E0) (tstamp 5B854888)
+  (module Drake:SB2P (layer F.Cu) (tedit 56B343E0) (tstamp 5B854888)
     (at 220 176.984 90)
     (path /5B8214D9)
     (fp_text reference S1 (at -0.016 3 180) (layer F.SilkS)
@@ -916,7 +916,7 @@
       (net 39 "Net-(S1-Pad1)"))
   )
 
-  (module device.farm:Mean-Well-PM-15-5 (layer F.Cu) (tedit 5CC03338) (tstamp 5B8548B3)
+  (module Drake:Mean-Well-PM-15-5 (layer F.Cu) (tedit 5CC03338) (tstamp 5B8548B3)
     (at 125 190 270)
     (path /5B749C87)
     (fp_text reference U3 (at -7 39 270) (layer F.SilkS)
@@ -952,7 +952,7 @@
     )
   )
 
-  (module device.farm:G3MB-SSR (layer F.Cu) (tedit 5CBF4253) (tstamp 5B85492E)
+  (module Drake:G3MB-SSR (layer F.Cu) (tedit 5CBF4253) (tstamp 5B85492E)
     (at 171.58 203.84 270)
     (path /5B7C587B)
     (fp_text reference U8 (at -11.84 -5.42) (layer F.SilkS)
@@ -980,7 +980,7 @@
     )
   )
 
-  (module device.farm:G3MB-SSR (layer F.Cu) (tedit 5CBF4253) (tstamp 5B85493A)
+  (module Drake:G3MB-SSR (layer F.Cu) (tedit 5CBF4253) (tstamp 5B85493A)
     (at 186.58 203.84 270)
     (path /5B7C59CA)
     (fp_text reference U9 (at -11.84 -5.42) (layer F.SilkS)
@@ -1008,7 +1008,7 @@
     )
   )
 
-  (module device.farm:SWD (layer F.Cu) (tedit 56B33A4E) (tstamp 5B854B9A)
+  (module Drake:SWD (layer F.Cu) (tedit 56B33A4E) (tstamp 5B854B9A)
     (at 231.14 175.26 180)
     (path /5B7C48A7)
     (fp_text reference X1 (at 0 2.54 180) (layer F.SilkS) hide
@@ -1030,7 +1030,7 @@
       (net 48 /SWDIO))
   )
 
-  (module device.farm:Micro-Match-FOB-6 (layer F.Cu) (tedit 5CC033C5) (tstamp 5B854BAB)
+  (module Drake:Micro-Match-FOB-6 (layer F.Cu) (tedit 5CC033C5) (tstamp 5B854BAB)
     (at 252 211)
     (path /5B7B5922)
     (fp_text reference X2 (at -6 0) (layer F.SilkS) hide
@@ -1065,7 +1065,7 @@
     )
   )
 
-  (module device.farm:Micro-Match-FOB-6 (layer F.Cu) (tedit 5CC033C5) (tstamp 5B854BBC)
+  (module Drake:Micro-Match-FOB-6 (layer F.Cu) (tedit 5CC033C5) (tstamp 5B854BBC)
     (at 252 199)
     (path /5B7B59DC)
     (fp_text reference X3 (at -6 0) (layer F.SilkS) hide
@@ -1100,7 +1100,7 @@
     )
   )
 
-  (module device.farm:Micro-Match-FOB-6 (layer F.Cu) (tedit 5CC033C5) (tstamp 5B854BCD)
+  (module Drake:Micro-Match-FOB-6 (layer F.Cu) (tedit 5CC033C5) (tstamp 5B854BCD)
     (at 252 187)
     (path /5B7B5A4F)
     (fp_text reference X4 (at -6 0) (layer F.SilkS) hide
@@ -1135,7 +1135,7 @@
     )
   )
 
-  (module device.farm:LED_RGB_5050-6 (layer F.Cu) (tedit 59155824) (tstamp 5B96D4B7)
+  (module Drake:LED_RGB_5050-6 (layer F.Cu) (tedit 59155824) (tstamp 5B96D4B7)
     (at 239.6 193 180)
     (descr http://cdn.sparkfun.com/datasheets/Components/LED/5060BRG4.pdf)
     (tags "RGB LED 5050-6")
@@ -1182,7 +1182,7 @@
     )
   )
 
-  (module device.farm:TSSOP-16_4.4x5mm_Pitch0.65mm-EP (layer F.Cu) (tedit 5CC03656) (tstamp 5B9AA1A0)
+  (module Drake:TSSOP-16_4.4x5mm_Pitch0.65mm-EP (layer F.Cu) (tedit 5CC03656) (tstamp 5B9AA1A0)
     (at 232.6 207.6)
     (descr "16-Lead Plastic Thin Shrink Small Outline (ST)-4.4 mm Body [TSSOP] (see Microchip Packaging Specification 00000049BS.pdf)")
     (tags "SSOP 0.65")
@@ -1249,7 +1249,7 @@
     )
   )
 
-  (module device.farm:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B9B9EA8)
+  (module Drake:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B9B9EA8)
     (at 202.54 139.778 180)
     (path /5B9B9A00)
     (fp_text reference J13 (at 5.334 15.494 180) (layer F.SilkS) hide
@@ -1283,7 +1283,7 @@
     )
   )
 
-  (module device.farm:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B9B9EB0)
+  (module Drake:DG142R-2-5.08 (layer F.Cu) (tedit 5CBF3B49) (tstamp 5B9B9EB0)
     (at 242.54 139.778 180)
     (path /5B9B9AF2)
     (fp_text reference J14 (at -3.46 15.778 180) (layer F.SilkS) hide
@@ -1317,7 +1317,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDECC)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDECC)
     (at 115 227.46 90)
     (path /5B9C0309)
     (fp_text reference J15 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1343,7 +1343,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDED8)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDED8)
     (at 135 227.46 90)
     (path /5B9C082A)
     (fp_text reference J16 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1369,7 +1369,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDEE4)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDEE4)
     (at 155 227.46 90)
     (path /5B9C090F)
     (fp_text reference J17 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1395,7 +1395,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDEF0)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDEF0)
     (at 105 227.46 90)
     (path /5B9BDD74)
     (fp_text reference J18 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1421,7 +1421,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDEFC)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDEFC)
     (at 125 227.46 90)
     (path /5B9BF229)
     (fp_text reference J19 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1447,7 +1447,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDF08)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDF08)
     (at 145 227.46 90)
     (path /5B9BF301)
     (fp_text reference J20 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1473,7 +1473,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDF14)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDF14)
     (at 105 132.46 90)
     (path /5B9BF4B1)
     (fp_text reference J21 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1499,7 +1499,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDF20)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDF20)
     (at 125 132.46 90)
     (path /5B9BFA0E)
     (fp_text reference J22 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1525,7 +1525,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDF2C)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BDF2C)
     (at 145 132.46 90)
     (path /5B9BFAED)
     (fp_text reference J23 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1551,7 +1551,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BE36B)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BE36B)
     (at 115 132.46 90)
     (path /5B9C0F71)
     (fp_text reference J2 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1577,7 +1577,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BE377)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BE377)
     (at 135 132.46 90)
     (path /5B9C1A9D)
     (fp_text reference J9 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1603,7 +1603,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BE383)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BE383)
     (at 155 132.46 90)
     (path /5B9C1B88)
     (fp_text reference J11 (at 0 3.5 90) (layer F.SilkS) hide
@@ -1629,7 +1629,7 @@
     )
   )
 
-  (module device.farm:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BE38F)
+  (module Drake:Tab-6.3 (layer F.Cu) (tedit 5CC035B2) (tstamp 5B9BE38F)
     (at 169 133.46 270)
     (path /5B9C1C76)
     (fp_text reference J12 (at 0 3.5 270) (layer F.SilkS) hide
@@ -1655,7 +1655,7 @@
     )
   )
 
-  (module device.farm:NanoPi-Duo (layer F.Cu) (tedit 5C073010) (tstamp 5C1054DE)
+  (module Drake:NanoPi-Duo (layer F.Cu) (tedit 5C073010) (tstamp 5C1054DE)
     (at 235.54 156.430248)
     (path /5C105A7D)
     (fp_text reference M1 (at 0 0) (layer F.SilkS)
