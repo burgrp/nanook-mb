@@ -88,7 +88,16 @@ public:
 		bool isPwrOk = pwrOk->get();
 
 		// RGB LED
-		rgbLed.init(&target::GPIOB, 3, 1, 0, &target::TIM16, &rgbSettings[isPwrOk]);
+		rgbLed::Setting rgbTest = {
+			.rampUpTime = 0,
+			.onTime = 255,
+			.rampDownTime = 0,
+			.offTime = 0,
+			.rgb = { 255, 255, 255 }
+		};
+		rgbLed.init(&target::GPIOB, 3, 1, 0, &target::TIM16, &rgbTest);
+		for (volatile int c = 0; c < 100000; c++);
+		rgbLed.set(&rgbSettings[isPwrOk]);
 
 		if (isPwrOk) {
 
