@@ -97,7 +97,7 @@ public:
 		};
 		rgbLed.init(&target::GPIOB, 3, 1, 0, &target::TIM16, &rgbTest);
 		for (volatile int c = 0; c < 100000; c++);
-		rgbLed.set(&rgbSettings[isPwrOk]);
+		rgbLed.set(&rgbSettings[isPwrOk]);                        
 
 		if (isPwrOk) {
 
