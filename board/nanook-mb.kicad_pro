@@ -66,6 +66,7 @@
         "drill_out_of_range": "error",
         "duplicate_footprints": "warning",
         "extra_footprint": "warning",
+        "footprint": "error",
         "footprint_type_mismatch": "warning",
         "hole_clearance": "error",
         "hole_near_hole": "error",
@@ -402,6 +403,23 @@
         "name": "Default",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.25,
+        "via_diameter": 0.6,
+        "via_drill": 0.4,
+        "wire_width": 6.0
+      },
+      {
+        "bus_width": 12.0,
+        "clearance": 0.199,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Default",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.4,
         "via_diameter": 0.6,
         "via_drill": 0.4,
@@ -417,14 +435,6 @@
         "microvia_diameter": 0.3,
         "microvia_drill": 0.1,
         "name": "HC",
-        "nets": [
-          "/COMP_L1",
-          "/COMP_L2",
-          "/COMP_L3",
-          "/MAINS_L1",
-          "/MAINS_L2",
-          "/MAINS_L3"
-        ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 5.0,
@@ -442,12 +452,6 @@
         "microvia_diameter": 0.3,
         "microvia_drill": 0.1,
         "name": "LC",
-        "nets": [
-          "/MAINS_N",
-          "/SWITCHED_L",
-          "Net-(J6-Pad2)",
-          "Net-(J7-Pad2)"
-        ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 1.0,
@@ -465,19 +469,6 @@
         "microvia_diameter": 0.3,
         "microvia_drill": 0.1,
         "name": "PWR",
-        "nets": [
-          "+3V3",
-          "+5V",
-          "/3V3_BACKUP",
-          "/5V_BACKUP",
-          "/BACKUP_C",
-          "/COMP_5V",
-          "/COMP_RELAY_PWR",
-          "GND",
-          "Net-(D5-Pad1)",
-          "Net-(J24-Pad2)",
-          "Net-(J5-Pad2)"
-        ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.6,
@@ -487,9 +478,96 @@
       }
     ],
     "meta": {
-      "version": 2
+      "version": 3
     },
-    "net_colors": null
+    "net_colors": null,
+    "netclass_assignments": null,
+    "netclass_patterns": [
+      {
+        "netclass": "HC",
+        "pattern": "/COMP_L1"
+      },
+      {
+        "netclass": "HC",
+        "pattern": "/COMP_L2"
+      },
+      {
+        "netclass": "HC",
+        "pattern": "/COMP_L3"
+      },
+      {
+        "netclass": "HC",
+        "pattern": "/MAINS_L1"
+      },
+      {
+        "netclass": "HC",
+        "pattern": "/MAINS_L2"
+      },
+      {
+        "netclass": "HC",
+        "pattern": "/MAINS_L3"
+      },
+      {
+        "netclass": "LC",
+        "pattern": "/MAINS_N"
+      },
+      {
+        "netclass": "LC",
+        "pattern": "/SWITCHED_L"
+      },
+      {
+        "netclass": "LC",
+        "pattern": "Net-(J6-Pad2)"
+      },
+      {
+        "netclass": "LC",
+        "pattern": "Net-(J7-Pad2)"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "+3V3"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "+5V"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "/3V3_BACKUP"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "/5V_BACKUP"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "/BACKUP_C"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "/COMP_5V"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "/COMP_RELAY_PWR"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "GND"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "Net-(D5-Pad1)"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "Net-(J24-Pad2)"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "Net-(J5-Pad2)"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
@@ -541,6 +619,8 @@
     "plot_directory": "",
     "spice_adjust_passive_values": false,
     "spice_external_command": "spice \"%I\"",
+    "spice_save_all_currents": false,
+    "spice_save_all_voltages": false,
     "subpart_first_id": 65,
     "subpart_id_separator": 0
   },
