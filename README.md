@@ -1,6 +1,6 @@
 # NANOOK main control board
 
-Nanook-mb is control board for open source [NANOOK ground-water heat pump](http://www.nanook.cc) project. The board is responsible for:
+Nanook-mb is control board for open source [NANOOK ground-water heat pump](https://cad.onshape.com/documents/2a5990c1c14b1713fdde9141/w/393a2c463278bded31251c68/e/64a137d08251e156e9e96024?explodedView=MXEOv0Y8%2BFJTUT8HV&renderMode=0&rightPanel=explodedViewPanel&uiState=64dd1223bc9e520fdb3377e3) project. The board is responsible for:
 
 - soft-switching three phases compressor
 - switching two circulation pumps
@@ -36,7 +36,7 @@ Ground wire must be terminated by crimp eye-type connector and mounted by screw 
 ![Eye-type connector](images/eye.jpg)
 
 ### MB to compressor (#2)
-This is, with #1, another high-current connection done by 3x 2.5mm<sup>2</sup> cable. Both sides must be terminated by 6.3 Fastons. 
+This is, with #1, another high-current connection done by 3x 2.5mm<sup>2</sup> cable. Both sides must be terminated by 6.3 Fastons.
 
 ### MB to PWM SSR power lines (#3, #4)
 These are six 2.5mm<sup>2</sup> wires terminated by 6.3 Fastons on board side and by eye on SSR side. Make sure all six wires (R, S, T, U, V, W) are connected to properly.
@@ -63,7 +63,7 @@ For wires of EEV stepper motor. Color coding for Carel valves is marked on PCB:
 - YW - yellow.
 
 ### I<sup>2</sup>C bus (#13)
-There are three connectors on board, all of them sharing single I<sup>2</sup>C bus. Analog sensor boards are connected by 6-wire flat cable with crimped Micro-Match connectors. 
+There are three connectors on board, all of them sharing single I<sup>2</sup>C bus. Analog sensor boards are connected by 6-wire flat cable with crimped Micro-Match connectors.
 
 ![Micro-Match cable](images/mm-6.jpg)
 
@@ -95,7 +95,7 @@ Pressure sensors are available either with other connectors than JST-XH or with 
 - 2: SIGNAL (yellow)
 - 3: +5V (red)
 
-and for Carel sensors with green, white and black wires as: 
+and for Carel sensors with green, white and black wires as:
 
 - 1: GND (green)
 - 2: SIGNAL (white)
@@ -120,7 +120,7 @@ Carel SPKT refrigerant pressure sensor
 
 
 ### Analog sensors board to water flow sensors (#20, #21)
-Water flow sensors are available either with other connectors than JST-XH or with no connector at all. You need to crimp proper three wire JST-XH connectors as 
+Water flow sensors are available either with other connectors than JST-XH or with no connector at all. You need to crimp proper three wire JST-XH connectors as
 - 1: GND (black)
 - 2: SIGNAL (yellow)
 - 3: +5V (red)
@@ -142,7 +142,7 @@ Main board is connected to network by WiFi. Although there is small chip antenna
 ## Compiling firmware
 In order to compile and flash firmware, you need to install Node.js, openocd and arm-none-eabi GCC.
 
-Source code is written our [Silicon build system](https://github.com/device-farm/silicon). 
+Source code is written our [Silicon build system](https://github.com/device-farm/silicon).
 Install Silicon by:
 ```sh
 sudo npm install -g @device.farm/silicon
